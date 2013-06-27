@@ -59,10 +59,10 @@ value
   = integer / string / var
 
 var
-  = letters:letter+ { return "_env['" + letters.join("") + "']"; }
+  = letters:letter+ { return "_env['" + letters.join("").toLowerCase() + "']"; }
 
 string
-  = "\"" letters:[^\"]+ "\"" { return "\"" + letters.join("") + "\""; }
+  = "\"" letters:[^\"]+ "\"" { return "\"" + letters.join("").toLowerCase() + "\""; }
 
 integer
   = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
