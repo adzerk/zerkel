@@ -5,7 +5,7 @@ combination
   = and / or / not / clause
 
 clause
-  = eq / numComp / contains / primary
+  = eq / numComp / contains / like / primary
 
 primary
   = value / "(" comb:combination ")" { return "(" + comb + ")"; }
@@ -33,8 +33,11 @@ not
 containsOp
   = "CONTAINS" / "contains"
 
+likeOp
+  = "LIKE" / "like"
+
 eqOp
-  = "is" / "IS" / "="
+  = "="
 
 numCompOp
   = ">" / "<" / ">=" / "<="
@@ -46,7 +49,10 @@ numComp
   = left:value space op:numCompOp space right:value { return left + op + right; }
 
 contains
-  = left:value space containsOp space right:value { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"}
+  = left:value space containsOp space right:value { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"; }
+
+like
+  = left:value space likeOp space right:value { return "_helpers['match'](" + left + "," + right + ")"; }
 
 /* values */
 letter

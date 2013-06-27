@@ -47,11 +47,13 @@ module.exports = (function(){
         "or": parse_or,
         "not": parse_not,
         "containsOp": parse_containsOp,
+        "likeOp": parse_likeOp,
         "eqOp": parse_eqOp,
         "numCompOp": parse_numCompOp,
         "eq": parse_eq,
         "numComp": parse_numComp,
         "contains": parse_contains,
+        "like": parse_like,
         "letter": parse_letter,
         "space": parse_space,
         "value": parse_value,
@@ -138,7 +140,10 @@ module.exports = (function(){
           if (result0 === null) {
             result0 = parse_contains();
             if (result0 === null) {
-              result0 = parse_primary();
+              result0 = parse_like();
+              if (result0 === null) {
+                result0 = parse_primary();
+              }
             }
           }
         }
@@ -428,38 +433,42 @@ module.exports = (function(){
         return result0;
       }
       
-      function parse_eqOp() {
+      function parse_likeOp() {
         var result0;
         
-        if (input.substr(pos, 2) === "is") {
-          result0 = "is";
-          pos += 2;
+        if (input.substr(pos, 4) === "LIKE") {
+          result0 = "LIKE";
+          pos += 4;
         } else {
           result0 = null;
           if (reportFailures === 0) {
-            matchFailed("\"is\"");
+            matchFailed("\"LIKE\"");
           }
         }
         if (result0 === null) {
-          if (input.substr(pos, 2) === "IS") {
-            result0 = "IS";
-            pos += 2;
+          if (input.substr(pos, 4) === "like") {
+            result0 = "like";
+            pos += 4;
           } else {
             result0 = null;
             if (reportFailures === 0) {
-              matchFailed("\"IS\"");
+              matchFailed("\"like\"");
             }
           }
-          if (result0 === null) {
-            if (input.charCodeAt(pos) === 61) {
-              result0 = "=";
-              pos++;
-            } else {
-              result0 = null;
-              if (reportFailures === 0) {
-                matchFailed("\"=\"");
-              }
-            }
+        }
+        return result0;
+      }
+      
+      function parse_eqOp() {
+        var result0;
+        
+        if (input.charCodeAt(pos) === 61) {
+          result0 = "=";
+          pos++;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"=\"");
           }
         }
         return result0;
@@ -643,7 +652,53 @@ module.exports = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, left, right) { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"})(pos0, result0[0], result0[4]);
+          result0 = (function(offset, left, right) { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"; })(pos0, result0[0], result0[4]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_like() {
+        var result0, result1, result2, result3, result4;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_value();
+        if (result0 !== null) {
+          result1 = parse_space();
+          if (result1 !== null) {
+            result2 = parse_likeOp();
+            if (result2 !== null) {
+              result3 = parse_space();
+              if (result3 !== null) {
+                result4 = parse_value();
+                if (result4 !== null) {
+                  result0 = [result0, result1, result2, result3, result4];
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, left, right) { return "_helpers['match'](" + left + "," + right + ")"; })(pos0, result0[0], result0[4]);
         }
         if (result0 === null) {
           pos = pos0;
