@@ -10,14 +10,31 @@ clause
 primary
   = value / "(" comb:combination ")" { return "(" + comb + ")"; }
 
+/* Compound Ops */
+andOp
+  = "AND" / "and"
+
+orOp
+  = "OR" / "or"
+
+notOp
+  = "NOT" / "not"
+
 and
-  = left:clause space andStmt space right:combination { return left + "&&" + right; }
+  = left:clause space andOp space right:combination { return left + "&&" + right; }
 
 or
-  = left:clause space orStmt space right:combination { return left + "||" + right; }
+  = left:clause space orOp space right:combination { return left + "||" + right; }
 
 not
-  = notStmt space clause:clause { return "!" + clause; }
+  = notOp space clause:clause { return "!" + clause; }
+
+/* Ops */
+containsStmt
+  = "CONTAINS" / "contains"
+
+eqStmt
+  = "is" / "IS" / "="
 
 eq
   = left:value space eqStmt space right:value { return left + "===" + right; }
@@ -31,30 +48,13 @@ lt
 contains
   = left:value space containsStmt space right:value { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"}
 
-/* Statements */
-andStmt
-  = "AND" / "and"
-
-orStmt
-  = "OR" / "or"
-
-notStmt
-  = "NOT" / "not"
-
-containsStmt
-  = "CONTAINS" / "contains"
-
-eqStmt
-  = "is" / "IS" / "="
-
-/* builders */
+/* values */
 letter
   = [A-Za-z]
 
 space
-  = [ ]+
+  = [ \n\t\r]+
 
-/* values */
 value
   = integer / string / var
 
