@@ -7,7 +7,7 @@ makeTest = (query, bindings, expected) ->
 
 makeTest 'x > 1', {x: 2}, true
 makeTest 'x > 1', {x: 1}, false
-makeTest 'x = "Hi Bob"', {x: 'hi bob'}, true
+makeTest 'x = "Hi Bob"', {x: 'Hi Bob'}, true
 makeTest 'x = "Hi Bob"', {x: 'hi'}, false
 makeTest 'x <> "Hi Bob"', {x: 'hi bob'}, false
 makeTest 'x <> "Hi Bob"', {x: 'hi'}, true
@@ -42,7 +42,7 @@ makeTest = (a, b, expected) ->
   it "#{a} like #{b} should be #{expected}", ->
     assert.equal expected, compiler.match(a, b)
 
-makeTest "foo", "foo*", false
+makeTest "foo", "Foo*", false
 makeTest "foo", "f*", true
 makeTest "foo", "*oo", true
 makeTest "loop", "*oo*", true

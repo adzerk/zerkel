@@ -51,6 +51,8 @@ module.exports = (function(){
         "eqOp": parse_eqOp,
         "notEqOp": parse_notEqOp,
         "numCompOp": parse_numCompOp,
+        "stringEq": parse_stringEq,
+        "stringNotEq": parse_stringNotEq,
         "eq": parse_eq,
         "notEq": parse_notEq,
         "numComp": parse_numComp,
@@ -59,6 +61,7 @@ module.exports = (function(){
         "letter": parse_letter,
         "space": parse_space,
         "value": parse_value,
+        "stringOrVar": parse_stringOrVar,
         "var": parse_var,
         "string": parse_string,
         "integer": parse_integer
@@ -542,13 +545,13 @@ module.exports = (function(){
         return result0;
       }
       
-      function parse_eq() {
+      function parse_stringEq() {
         var result0, result1, result2, result3, result4;
         var pos0, pos1;
         
         pos0 = pos;
         pos1 = pos;
-        result0 = parse_value();
+        result0 = parse_stringOrVar();
         if (result0 !== null) {
           result1 = parse_space();
           if (result1 !== null) {
@@ -556,7 +559,7 @@ module.exports = (function(){
             if (result2 !== null) {
               result3 = parse_space();
               if (result3 !== null) {
-                result4 = parse_value();
+                result4 = parse_stringOrVar();
                 if (result4 !== null) {
                   result0 = [result0, result1, result2, result3, result4];
                 } else {
@@ -580,10 +583,105 @@ module.exports = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, left, right) { return left + "==" + right; })(pos0, result0[0], result0[4]);
+          result0 = (function(offset, left, right) { return "(_helpers['strEqual'](" + left + "," + right + "))"; })(pos0, result0[0], result0[4]);
         }
         if (result0 === null) {
           pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_stringNotEq() {
+        var result0, result1, result2, result3, result4;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_stringOrVar();
+        if (result0 !== null) {
+          result1 = parse_space();
+          if (result1 !== null) {
+            result2 = parse_notEqOp();
+            if (result2 !== null) {
+              result3 = parse_space();
+              if (result3 !== null) {
+                result4 = parse_stringOrVar();
+                if (result4 !== null) {
+                  result0 = [result0, result1, result2, result3, result4];
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, left, right) { return "(!_helpers['strEqual'](" + left + "," + right + "))"; })(pos0, result0[0], result0[4]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_eq() {
+        var result0, result1, result2, result3, result4;
+        var pos0, pos1;
+        
+        result0 = parse_stringEq();
+        if (result0 === null) {
+          pos0 = pos;
+          pos1 = pos;
+          result0 = parse_value();
+          if (result0 !== null) {
+            result1 = parse_space();
+            if (result1 !== null) {
+              result2 = parse_eqOp();
+              if (result2 !== null) {
+                result3 = parse_space();
+                if (result3 !== null) {
+                  result4 = parse_value();
+                  if (result4 !== null) {
+                    result0 = [result0, result1, result2, result3, result4];
+                  } else {
+                    result0 = null;
+                    pos = pos1;
+                  }
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+          if (result0 !== null) {
+            result0 = (function(offset, left, right) { return left + "==" + right; })(pos0, result0[0], result0[4]);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
         }
         return result0;
       }
@@ -592,19 +690,25 @@ module.exports = (function(){
         var result0, result1, result2, result3, result4;
         var pos0, pos1;
         
-        pos0 = pos;
-        pos1 = pos;
-        result0 = parse_value();
-        if (result0 !== null) {
-          result1 = parse_space();
-          if (result1 !== null) {
-            result2 = parse_notEqOp();
-            if (result2 !== null) {
-              result3 = parse_space();
-              if (result3 !== null) {
-                result4 = parse_value();
-                if (result4 !== null) {
-                  result0 = [result0, result1, result2, result3, result4];
+        result0 = parse_stringNotEq();
+        if (result0 === null) {
+          pos0 = pos;
+          pos1 = pos;
+          result0 = parse_value();
+          if (result0 !== null) {
+            result1 = parse_space();
+            if (result1 !== null) {
+              result2 = parse_notEqOp();
+              if (result2 !== null) {
+                result3 = parse_space();
+                if (result3 !== null) {
+                  result4 = parse_value();
+                  if (result4 !== null) {
+                    result0 = [result0, result1, result2, result3, result4];
+                  } else {
+                    result0 = null;
+                    pos = pos1;
+                  }
                 } else {
                   result0 = null;
                   pos = pos1;
@@ -621,15 +725,12 @@ module.exports = (function(){
             result0 = null;
             pos = pos1;
           }
-        } else {
-          result0 = null;
-          pos = pos1;
-        }
-        if (result0 !== null) {
-          result0 = (function(offset, left, right) { return left + "!=" + right; })(pos0, result0[0], result0[4]);
-        }
-        if (result0 === null) {
-          pos = pos0;
+          if (result0 !== null) {
+            result0 = (function(offset, left, right) { return left + "!=" + right; })(pos0, result0[0], result0[4]);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
         }
         return result0;
       }
@@ -832,6 +933,16 @@ module.exports = (function(){
         return result0;
       }
       
+      function parse_stringOrVar() {
+        var result0;
+        
+        result0 = parse_string();
+        if (result0 === null) {
+          result0 = parse_var();
+        }
+        return result0;
+      }
+      
       function parse_var() {
         var result0, result1;
         var pos0;
@@ -923,7 +1034,7 @@ module.exports = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, letters) { return "\"" + letters.join("").toLowerCase() + "\""; })(pos0, result0[1]);
+          result0 = (function(offset, letters) { return "\"" + letters.join("") + "\""; })(pos0, result0[1]);
         }
         if (result0 === null) {
           pos = pos0;

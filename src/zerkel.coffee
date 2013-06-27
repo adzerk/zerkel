@@ -15,7 +15,9 @@ module.exports.match = match = (val, pattern) ->
   if pattern[pattern.length - 1] == '*'
     return (val.indexOf(pattern[0..-2]) == 0) and val.length > pattern.length
 
-module.exports.helpers = helpers = {match: match}
+module.exports.strEqual = strEqual = (a, b) -> a.toLowerCase() == b.toLowerCase()
+
+module.exports.helpers = helpers = {match: match, strEqual: strEqual}
 
 module.exports.compile = (query) ->
   body = "return " + parser.parse query
