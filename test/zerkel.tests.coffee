@@ -9,6 +9,8 @@ makeTest 'x > 1', {x: 2}, true
 makeTest 'x > 1', {x: 1}, false
 makeTest 'x = "Hi Bob"', {x: 'hi bob'}, true
 makeTest 'x = "Hi Bob"', {x: 'hi'}, false
+makeTest 'x <> "Hi Bob"', {x: 'hi bob'}, false
+makeTest 'x <> "Hi Bob"', {x: 'hi'}, true
 makeTest 'x > 1 and y < 10', {x: 5, y: 5}, true
 makeTest 'x > 1 and y < 10', {x: 5, y: 15}, false
 makeTest 'x > 1 or y < 10', {x: 5, y: 15}, true

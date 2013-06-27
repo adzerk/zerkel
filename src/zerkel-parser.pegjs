@@ -5,7 +5,7 @@ combination
   = and / or / not / clause
 
 clause
-  = eq / numComp / contains / like / primary
+  = eq / notEq / numComp / contains / like / primary
 
 primary
   = value / "(" comb:combination ")" { return "(" + comb + ")"; }
@@ -39,11 +39,17 @@ likeOp
 eqOp
   = "="
 
+notEqOp
+  = "<>"
+
 numCompOp
   = ">" / "<" / ">=" / "<="
 
 eq
   = left:value space eqOp space right:value { return left + "==" + right; }
+
+notEq
+  = left:value space notEqOp space right:value { return left + "!=" + right; }
 
 numComp
   = left:value space op:numCompOp space right:value { return left + op + right; }
