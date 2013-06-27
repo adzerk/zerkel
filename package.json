@@ -1,12 +1,13 @@
 {
   "name": "zerkel",
   "version": "1.0.0",
-  "description": "A parser and executor for the zerkel language",
+  "description": "A compiler for the zerkel language",
   "dependencies": {
-    "coffee-script": "1.6.3",
-    "pegjs": "0.7.0"
+    "coffee-script": "1.6.3"
   },
-  "scripts": {
-    "install": "./node_modules/pegjs/bin/pegjs ./src/zerkel-parser.pegjs ./src/zerkel-parser.js"
+  "devDependencies": {
+    "chai": "1.2.0",
+    "mocha": "1.4.0",
+    "pegjs": "0.7.0"
   }
 }
