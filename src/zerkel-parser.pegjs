@@ -59,7 +59,7 @@ value
   = integer / string / var
 
 var
-  = letters:letter+ { return "_s['" + letters.join("") + "']"; }
+  = letters:letter+ { return "_env['" + letters.join("") + "']"; }
 
 string
   = "\"" letters:[^\"]+ "\"" { return "\"" + letters.join("") + "\""; }
