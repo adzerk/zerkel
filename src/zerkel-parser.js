@@ -551,7 +551,7 @@ module.exports = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, left, right) { return left + "===" + right; })(pos0, result0[0], result0[4]);
+          result0 = (function(offset, left, right) { return left + "==" + right; })(pos0, result0[0], result0[4]);
         }
         if (result0 === null) {
           pos = pos0;
