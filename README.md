@@ -21,7 +21,7 @@ count > 43 and (user = "bob" or user = "alice")
 keywords contains "awesome"
 ```
 
-All operators are available in upper and lowercase forms (they are otherwise case sensitive). Strings and variable names are NOT case sensitive.
+All operators are available in upper and lowercase forms.
 
 ###Usage
 Queries can executed in coffeescript/javascript using the zerkel module, like so:
