@@ -37,6 +37,7 @@ module.exports = (function(){
      */
     parse: function(input, startRule) {
       var parseFunctions = {
+        "prog": parse_prog,
         "combination": parse_combination,
         "clause": parse_clause,
         "primary": parse_primary,
@@ -58,6 +59,8 @@ module.exports = (function(){
         "like": parse_like,
         "letter": parse_letter,
         "space": parse_space,
+        "optionalSpace": parse_optionalSpace,
+        "requiredSpace": parse_requiredSpace,
         "value": parse_value,
         "var": parse_var,
         "string": parse_string,
@@ -69,7 +72,7 @@ module.exports = (function(){
           throw new Error("Invalid rule name: " + quote(startRule) + ".");
         }
       } else {
-        startRule = "combination";
+        startRule = "prog";
       }
       
       var pos = 0;
@@ -115,6 +118,40 @@ module.exports = (function(){
         }
         
         rightmostFailuresExpected.push(failure);
+      }
+      
+      function parse_prog() {
+        var result0, result1, result2;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        result0 = parse_optionalSpace();
+        if (result0 !== null) {
+          result1 = parse_combination();
+          if (result1 !== null) {
+            result2 = parse_optionalSpace();
+            if (result2 !== null) {
+              result0 = [result0, result1, result2];
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, comb) { return comb; })(pos0, result0[1]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
       }
       
       function parse_combination() {
@@ -294,11 +331,11 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_clause();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_requiredSpace();
           if (result1 !== null) {
             result2 = parse_andOp();
             if (result2 !== null) {
-              result3 = parse_space();
+              result3 = parse_requiredSpace();
               if (result3 !== null) {
                 result4 = parse_combination();
                 if (result4 !== null) {
@@ -340,11 +377,11 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_clause();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_requiredSpace();
           if (result1 !== null) {
             result2 = parse_orOp();
             if (result2 !== null) {
-              result3 = parse_space();
+              result3 = parse_requiredSpace();
               if (result3 !== null) {
                 result4 = parse_combination();
                 if (result4 !== null) {
@@ -386,7 +423,7 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_notOp();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_requiredSpace();
           if (result1 !== null) {
             result2 = parse_clause();
             if (result2 !== null) {
@@ -550,11 +587,11 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_value();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_optionalSpace();
           if (result1 !== null) {
             result2 = parse_eqOp();
             if (result2 !== null) {
-              result3 = parse_space();
+              result3 = parse_optionalSpace();
               if (result3 !== null) {
                 result4 = parse_value();
                 if (result4 !== null) {
@@ -596,11 +633,11 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_value();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_optionalSpace();
           if (result1 !== null) {
             result2 = parse_notEqOp();
             if (result2 !== null) {
-              result3 = parse_space();
+              result3 = parse_optionalSpace();
               if (result3 !== null) {
                 result4 = parse_value();
                 if (result4 !== null) {
@@ -642,11 +679,11 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_value();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_optionalSpace();
           if (result1 !== null) {
             result2 = parse_numCompOp();
             if (result2 !== null) {
-              result3 = parse_space();
+              result3 = parse_optionalSpace();
               if (result3 !== null) {
                 result4 = parse_value();
                 if (result4 !== null) {
@@ -688,11 +725,11 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_value();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_requiredSpace();
           if (result1 !== null) {
             result2 = parse_containsOp();
             if (result2 !== null) {
-              result3 = parse_space();
+              result3 = parse_requiredSpace();
               if (result3 !== null) {
                 result4 = parse_value();
                 if (result4 !== null) {
@@ -734,11 +771,11 @@ module.exports = (function(){
         pos1 = pos;
         result0 = parse_value();
         if (result0 !== null) {
-          result1 = parse_space();
+          result1 = parse_requiredSpace();
           if (result1 !== null) {
             result2 = parse_likeOp();
             if (result2 !== null) {
-              result3 = parse_space();
+              result3 = parse_requiredSpace();
               if (result3 !== null) {
                 result4 = parse_value();
                 if (result4 !== null) {
@@ -788,30 +825,41 @@ module.exports = (function(){
       }
       
       function parse_space() {
-        var result0, result1;
+        var result0;
         
         if (/^[ \n\t\r]/.test(input.charAt(pos))) {
-          result1 = input.charAt(pos);
+          result0 = input.charAt(pos);
           pos++;
         } else {
-          result1 = null;
+          result0 = null;
           if (reportFailures === 0) {
             matchFailed("[ \\n\\t\\r]");
           }
         }
+        return result0;
+      }
+      
+      function parse_optionalSpace() {
+        var result0, result1;
+        
+        result0 = [];
+        result1 = parse_space();
+        while (result1 !== null) {
+          result0.push(result1);
+          result1 = parse_space();
+        }
+        return result0;
+      }
+      
+      function parse_requiredSpace() {
+        var result0, result1;
+        
+        result1 = parse_space();
         if (result1 !== null) {
           result0 = [];
           while (result1 !== null) {
             result0.push(result1);
-            if (/^[ \n\t\r]/.test(input.charAt(pos))) {
-              result1 = input.charAt(pos);
-              pos++;
-            } else {
-              result1 = null;
-              if (reportFailures === 0) {
-                matchFailed("[ \\n\\t\\r]");
-              }
-            }
+            result1 = parse_space();
           }
         } else {
           result0 = null;

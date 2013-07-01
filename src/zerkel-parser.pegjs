@@ -1,5 +1,5 @@
 prog
-  = combination
+  = optionalSpace comb:combination optionalSpace { return comb; }
 
 combination
   = and / or / not / clause
@@ -21,13 +21,13 @@ notOp
   = "NOT" / "not"
 
 and
-  = left:clause space andOp space right:combination { return left + "&&" + right; }
+  = left:clause requiredSpace andOp requiredSpace right:combination { return left + "&&" + right; }
 
 or
-  = left:clause space orOp space right:combination { return left + "||" + right; }
+  = left:clause requiredSpace orOp requiredSpace right:combination { return left + "||" + right; }
 
 not
-  = notOp space clause:clause { return "!" + clause; }
+  = notOp requiredSpace clause:clause { return "!" + clause; }
 
 /* Ops */
 containsOp
@@ -45,26 +45,32 @@ notEqOp
 numCompOp
   = ">" / "<" / ">=" / "<="
 eq
-  = left:value space eqOp space right:value { return left + "==" + right; }
+  = left:value optionalSpace eqOp optionalSpace right:value { return left + "==" + right; }
 
 notEq
-  = left:value space notEqOp space right:value { return left + "!=" + right; }
+  = left:value optionalSpace notEqOp optionalSpace right:value { return left + "!=" + right; }
 
 numComp
-  = left:value space op:numCompOp space right:value { return left + op + right; }
+  = left:value optionalSpace op:numCompOp optionalSpace right:value { return left + op + right; }
 
 contains
-  = left:value space containsOp space right:value { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"; }
+  = left:value requiredSpace containsOp requiredSpace right:value { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"; }
 
 like
-  = left:value space likeOp space right:value { return "_helpers['match'](" + left + "," + right + ")"; }
+  = left:value requiredSpace likeOp requiredSpace right:value { return "_helpers['match'](" + left + "," + right + ")"; }
 
 /* values */
 letter
   = [A-Za-z]
 
 space
-  = [ \n\t\r]+
+  = [ \n\t\r]
+
+optionalSpace
+  = space*
+
+requiredSpace
+  = space+
 
 value
   = integer / string / var
