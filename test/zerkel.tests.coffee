@@ -37,6 +37,7 @@ makeTest('((keywords contains "c#" and keywords contains "performance") or (keyw
 makeTest '"foo" = x', {x: "foo"}, true
 makeTest 'x like "foo*"', {x: "foobar"}, true
 makeTest 'x like "foo*"', {x: "foo"}, false
+makeTest 'array contains "Foo"', {}, false
 
 makeTest = (a, b, expected) ->
   it "#{a} like #{b} should be #{expected}", ->

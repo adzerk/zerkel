@@ -54,7 +54,7 @@ numComp
   = left:value optionalSpace op:numCompOp optionalSpace right:value { return left + op + right; }
 
 contains
-  = left:value requiredSpace containsOp requiredSpace right:value { return "(" + left + ".indexOf(" + right + ")" + " >= 0)"; }
+  = left:value requiredSpace containsOp requiredSpace right:value { return "(" + left + "&&" + left + ".indexOf(" + right + ")" + " >= 0)"; }
 
 like
   = left:value requiredSpace likeOp requiredSpace right:value { return "_helpers['match'](" + left + "," + right + ")"; }

@@ -6,7 +6,7 @@ module.exports.match = match = (val, pattern) ->
     pattern = val
     val = pattern
   if pattern == '*' then return true
-  if pattern[0] == '*' and pattern[pattern.length - 1] == '*' 
+  if pattern[0] == '*' and pattern[pattern.length - 1] == '*'
     pattern = pattern[1..-3]
     return (val.indexOf(pattern) >= 0) and val.length > pattern.length + 1
   if pattern[0] == '*'
@@ -20,4 +20,4 @@ module.exports.helpers = helpers = {match: match}
 module.exports.compile = (query) ->
   body = "return " + parser.parse(query)
   fn = new Function('_helpers', '_env', body)
-  return (env) -> fn helpers, env
+  return (env) -> Boolean fn helpers, env
