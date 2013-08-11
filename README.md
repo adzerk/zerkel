@@ -37,7 +37,9 @@ matchFn {count: 50, user: 'George Michael'} # terribly, unfortunately, false
 ```
 
 ###Status
-Currently in alpha testing.
+[![Build Status](https://travis-ci.org/adzerk/zerkel.png?branch=master)](https://travis-ci.org/adzerk/zerkel)
+
+Currently in beta testing.
 
 ###License
 Apache 2.0
