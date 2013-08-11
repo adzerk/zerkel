@@ -10,5 +10,8 @@
     "chai": "1.2.0",
     "mocha": "1.4.0",
     "pegjs": "0.7.0"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha -R dot"
   }
 }
