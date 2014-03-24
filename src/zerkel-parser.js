@@ -108,7 +108,7 @@ case 12:this.$ = Number(yytext);
 break;
 case 13:this.$ = yytext;
 break;
-case 14:this.$ = "_env['" + yytext + "']";
+case 14:this.$ = "_helpers['getIn'](_env, '" + yytext + "')";
 break;
 }
 },
@@ -611,7 +611,7 @@ case 14:return 5;
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:>|<|<=|>=)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[0-9]+)/,/^(?:"[^\"]*")/,/^(?:[A-Za-z]+)/,/^(?:\()/,/^(?:\))/,/^(?:$)/],
+rules: [/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:>|<|<=|>=)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[0-9]+)/,/^(?:"[^\"]*")/,/^(?:[\$A-Za-z]+(\.[A-Za-z]+)*)/,/^(?:\()/,/^(?:\))/,/^(?:$)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],"inclusive":true}}
 };
 return lexer;

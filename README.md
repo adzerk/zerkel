@@ -36,10 +36,19 @@ matchFn {count: 12, user: 'alice'} # false
 matchFn {count: 50, user: 'George Michael'} # terribly, unfortunately, false
 ```
 
+You can also access properties on passed in objects, like so:
+
+```coffeescript
+zerkel = require 'zerkel'
+
+query = 'user.location = "open field west of a white house"'
+matchFn = zerkel.compile query
+matchFn {user: {name: 'bob', location: 'open field west of a white house'}} # true
+matchFn {user: {name: 'alice', location: 'middle earth'}} # false
+```
+
 ###Status
 [![Build Status](https://travis-ci.org/adzerk/zerkel.png?branch=master)](https://travis-ci.org/adzerk/zerkel)
-
-Currently in beta testing.
 
 ###License
 Apache 2.0

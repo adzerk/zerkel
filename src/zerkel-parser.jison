@@ -1,21 +1,21 @@
 /* lexical grammar */
 %lex
 %%
-\s+                   {/* skip whitespace */}
-"and"|"AND"           {return 'AND';}
-"or"|"OR"             {return 'OR';}
-"not"|"NOT"           {return 'NOT';}
-"="                   {return '=';}
-"<>"                  {return '<>';}
-">"|"<"|"<="|">="     {return 'LTGT';}
-"contains"|"CONTAINS" {return 'CONTAINS';}
-"like"|"LIKE"         {return 'LIKE';}
-[0-9]+                {return 'INTEGER';}
-\"[^\"]*\"            {return 'STRING';}
-[A-Za-z]+             {return 'VAR';}
-"("                   {return 'OPEN';}
-")"                   {return 'CLOSE';}
-<<EOF>>               {return 'EOF';}
+\s+                          {/* skip whitespace */}
+"and"|"AND"                  {return 'AND';}
+"or"|"OR"                    {return 'OR';}
+"not"|"NOT"                  {return 'NOT';}
+"="                          {return '=';}
+"<>"                         {return '<>';}
+">"|"<"|"<="|">="            {return 'LTGT';}
+"contains"|"CONTAINS"        {return 'CONTAINS';}
+"like"|"LIKE"                {return 'LIKE';}
+[0-9]+                       {return 'INTEGER';}
+\"[^\"]*\"                   {return 'STRING';}
+[\$A-Za-z]+(\.[A-Za-z]+)*    {return 'VAR';}
+"("                          {return 'OPEN';}
+")"                          {return 'CLOSE';}
+<<EOF>>                      {return 'EOF';}
 
 /lex
 
@@ -63,5 +63,5 @@ value
     | STRING
         {$$ = yytext;}
     | VAR
-        {$$ = "_env['" + yytext + "']";}
+        {$$ = "_helpers['getIn'](_env, '" + yytext + "')";}
     ;
