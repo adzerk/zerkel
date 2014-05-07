@@ -77,7 +77,8 @@ yy: {},
 symbols_: {"error":2,"expressions":3,"e":4,"EOF":5,"NOT":6,"OPEN":7,"CLOSE":8,"AND":9,"OR":10,"value":11,"=":12,"<>":13,"LTGT":14,"CONTAINS":15,"LIKE":16,"INTEGER":17,"STRING":18,"VAR":19,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"EOF",6:"NOT",7:"OPEN",8:"CLOSE",9:"AND",10:"OR",12:"=",13:"<>",14:"LTGT",15:"CONTAINS",16:"LIKE",17:"INTEGER",18:"STRING",19:"VAR"},
 productions_: [0,[3,2],[4,2],[4,3],[4,3],[4,3],[4,3],[4,3],[4,3],[4,3],[4,3],[4,1],[11,1],[11,1],[11,1]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
+performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */
+/**/) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
@@ -575,7 +576,8 @@ stateStackSize:function stateStackSize() {
         return this.conditionStack.length;
     },
 options: {},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
+performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START
+/**/) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
@@ -611,7 +613,7 @@ case 14:return 5;
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:>|<|<=|>=)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[0-9]+)/,/^(?:"[^\"]*")/,/^(?:[\$A-Za-z]+(\.[A-Za-z]+)*)/,/^(?:\()/,/^(?:\))/,/^(?:$)/],
+rules: [/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:<=|>=|<|>)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[0-9]+)/,/^(?:"[^\"]*")/,/^(?:[\$A-Za-z]+(\.[A-Za-z]+)*)/,/^(?:\()/,/^(?:\))/,/^(?:$)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],"inclusive":true}}
 };
 return lexer;

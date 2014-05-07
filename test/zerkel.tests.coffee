@@ -43,6 +43,7 @@ describe 'Language tests', ->
   makeTest 'x > 1 and y < 10', {x: 5, y: 15}, false
   makeTest 'x > 1 or y < 10', {x: 5, y: 15}, true
   makeTest 'x > 1 or y < 10', {x: 1, y: 15}, false
+  makeTest 'x >= 1', {x: 1}, true
   makeTest '(x > 1 and y < 10) or (x = 0)', {x: 5, y:5}, true
   makeTest '(x > 1 and y<10) or (x = 0)', {x: 0, y:15}, true
   makeTest '(x > 1 and y < 10) or (x = 0)', {x: 1, y:15}, false

@@ -7,7 +7,7 @@
 "not"|"NOT"                  {return 'NOT';}
 "="                          {return '=';}
 "<>"                         {return '<>';}
-">"|"<"|"<="|">="            {return 'LTGT';}
+"<="|">="|"<"|">"            {return 'LTGT';}
 "contains"|"CONTAINS"        {return 'CONTAINS';}
 "like"|"LIKE"                {return 'LIKE';}
 [0-9]+                       {return 'INTEGER';}
