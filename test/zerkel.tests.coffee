@@ -35,6 +35,8 @@ describe 'Language tests', ->
 
   makeTest 'x > 1', {x: 2}, true
   makeTest 'x>1', {x: 1}, false
+  makeTest '_x>1', {_x: 1}, false
+  makeTest 'x_x>1', {x_x: 1}, false
   makeTest 'x = "Hi Bob"', {x: 'Hi Bob'}, true
   makeTest 'x="Hi Bob"', {x: 'hi'}, false
   makeTest 'x <> "Hi Bob"', {x: 'Hi Bob'}, false

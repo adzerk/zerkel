@@ -12,7 +12,7 @@
 "like"|"LIKE"                {return 'LIKE';}
 [0-9]+                       {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
-[\$A-Za-z]+(\.[A-Za-z]+)*    {return 'VAR';}
+[\$A-Za-z_]+(\.[A-Za-z_]+)*  {return 'VAR';}
 "("                          {return 'OPEN';}
 ")"                          {return 'CLOSE';}
 <<EOF>>                      {return 'EOF';}
