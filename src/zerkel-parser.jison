@@ -10,7 +10,7 @@
 "<="|">="|"<"|">"            {return 'LTGT';}
 "contains"|"CONTAINS"        {return 'CONTAINS';}
 "like"|"LIKE"                {return 'LIKE';}
-[0-9]+                       {return 'INTEGER';}
+[\-0-9]+([0-9]+)*            {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
 [\$A-Za-z_]+(\.[A-Za-z_]+)*  {return 'VAR';}
 "("                          {return 'OPEN';}
