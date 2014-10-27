@@ -46,6 +46,7 @@ describe 'Language tests', ->
   makeTest 'x > 1 or y < 10', {x: 5, y: 15}, true
   makeTest 'x > 1 or y < 10', {x: 1, y: 15}, false
   makeTest 'x >= 1', {x: 1}, true
+  makeTest 'x1 >= 1', {x1: 1}, true
   makeTest 'x <= -1', {x: -4}, true
   makeTest 'x >= -10', {x: -6}, true
   makeTest '(x > 1 and y < 10) or (x = 0)', {x: 5, y:5}, true
@@ -76,3 +77,5 @@ describe 'Language tests', ->
   makeTest '1 > foo.bar', {foo: {bar: 1}}, false
   makeTest 'foo.bar < zip.ping', {foo: {bar: 1}, zip: {ping: 2}}, true
   makeTest '$foo.bar = 1', {"$foo": {bar: 1}}, true
+  makeTest '$foo.bar.baz = 1', {"$foo": {bar: {baz: 1}}}, true
+  makeTest '$foo.bar.baz = 1', {"$foo": {bar: {baz: 2}}}, false
