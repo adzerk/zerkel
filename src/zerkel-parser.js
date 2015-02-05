@@ -629,12 +629,14 @@ case 12:return 7;
 break;
 case 13:return 8;
 break;
-case 14:return 5;
+case 14:/* skip comments*/
+break;
+case 15:return 5;
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:<=|>=|<|>)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[\-0-9]+([0-9]+)*)/,/^(?:"[^\"]*")/,/^(?:[\$A-Za-z_]+([A-Za-z0-9_\.]+)*)/,/^(?:\()/,/^(?:\))/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:<=|>=|<|>)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[\-0-9]+([0-9]+)*)/,/^(?:"[^\"]*")/,/^(?:[\$A-Za-z_]+([A-Za-z0-9_\.]+)*)/,/^(?:\()/,/^(?:\))/,/^(?:\/\*(.|\r|\n)*?\*\/)/,/^(?:$)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"inclusive":true}}
 });
 return lexer;
 })();

@@ -69,6 +69,12 @@ describe 'Language tests', ->
   makeTest('((keywords contains "c#" and keywords contains "performance") or (keywords contains "sql server")) and not (keywords contains "android")',
            {keywords:["c#"]}, false)
   makeTest '"foo" = x', {x: "foo"}, true
+  makeTest '"foo" = x /* this still works! */', {x: "foo"}, true
+  makeTest '/* so 
+  does
+
+  this */
+  "foo" = x', {x: "foo"}, true
   makeTest 'x like "foo*"', {x: "foobar"}, true
   makeTest 'x like "foo*"', {x: "foo"}, false
   makeTest 'array contains "Foo"', {}, false

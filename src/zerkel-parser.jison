@@ -15,6 +15,7 @@
 [\$A-Za-z_]+([A-Za-z0-9_\.]+)*  {return 'VAR';}
 "("                          {return 'OPEN';}
 ")"                          {return 'CLOSE';}
+"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
 <<EOF>>                      {return 'EOF';}
 
 /lex
