@@ -1,7 +1,7 @@
 zerkel = require './'
 
-query = "(athleteId = 36 OR athleteId = 2170721) AND NOT (email)"
+query = "(x > 1) and ((y is 0) OR (y > 2))"
 
 fn = zerkel.compile query
 
-console.log fn {athleteId: 36, email: false}
+console.log fn {x: 10, y: 3}

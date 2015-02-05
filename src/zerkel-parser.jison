@@ -1,6 +1,8 @@
 /* lexical grammar */
 %lex
 %%
+"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
+"//".*($|\r\n|\r|\n)         {/* skip comments*/}
 \s+                          {/* skip whitespace */}
 "and"|"AND"                  {return 'AND';}
 "or"|"OR"                    {return 'OR';}
@@ -15,7 +17,6 @@
 [\$A-Za-z_]+([A-Za-z0-9_\.]+)*  {return 'VAR';}
 "("                          {return 'OPEN';}
 ")"                          {return 'CLOSE';}
-"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
 <<EOF>>                      {return 'EOF';}
 
 /lex

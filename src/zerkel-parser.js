@@ -601,42 +601,44 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* skip whitespace */
+case 0:/* skip comments*/
 break;
-case 1:return 9;
+case 1:/* skip comments*/
 break;
-case 2:return 10;
+case 2:/* skip whitespace */
 break;
-case 3:return 6;
+case 3:return 9;
 break;
-case 4:return 12;
+case 4:return 10;
 break;
-case 5:return 13;
+case 5:return 6;
 break;
-case 6:return 14;
+case 6:return 12;
 break;
-case 7:return 15;
+case 7:return 13;
 break;
-case 8:return 16;
+case 8:return 14;
 break;
-case 9:return 17;
+case 9:return 15;
 break;
-case 10:return 18;
+case 10:return 16;
 break;
-case 11:return 19;
+case 11:return 17;
 break;
-case 12:return 7;
+case 12:return 18;
 break;
-case 13:return 8;
+case 13:return 19;
 break;
-case 14:/* skip comments*/
+case 14:return 7;
 break;
-case 15:return 5;
+case 15:return 8;
+break;
+case 16:return 5;
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:<=|>=|<|>)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[\-0-9]+([0-9]+)*)/,/^(?:"[^\"]*")/,/^(?:[\$A-Za-z_]+([A-Za-z0-9_\.]+)*)/,/^(?:\()/,/^(?:\))/,/^(?:\/\*(.|\r|\n)*?\*\/)/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"inclusive":true}}
+rules: [/^(?:\/\*(.|\r|\n)*?\*\/)/,/^(?:\/\/.*($|\r\n|\r|\n))/,/^(?:\s+)/,/^(?:and|AND\b)/,/^(?:or|OR\b)/,/^(?:not|NOT\b)/,/^(?:=)/,/^(?:<>)/,/^(?:<=|>=|<|>)/,/^(?:contains|CONTAINS\b)/,/^(?:like|LIKE\b)/,/^(?:[\-0-9]+([0-9]+)*)/,/^(?:"[^\"]*")/,/^(?:[\$A-Za-z_]+([A-Za-z0-9_\.]+)*)/,/^(?:\()/,/^(?:\))/,/^(?:$)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],"inclusive":true}}
 });
 return lexer;
 })();

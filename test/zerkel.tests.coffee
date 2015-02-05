@@ -70,10 +70,11 @@ describe 'Language tests', ->
            {keywords:["c#"]}, false)
   makeTest '"foo" = x', {x: "foo"}, true
   makeTest '"foo" = x /* this still works! */', {x: "foo"}, true
-  makeTest '/* so 
-  does
-
+  makeTest '/* so \n
+  does \n
   this */
+  "foo" = x', {x: "foo"}, true
+  makeTest '// and this!\n 
   "foo" = x', {x: "foo"}, true
   makeTest 'x like "foo*"', {x: "foobar"}, true
   makeTest 'x like "foo*"', {x: "foo"}, false
