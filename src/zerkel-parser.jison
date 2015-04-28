@@ -17,6 +17,7 @@
 [\$A-Za-z_]+([A-Za-z0-9_\.]+)*  {return 'VAR';}
 "("                          {return 'OPEN';}
 ")"                          {return 'CLOSE';}
+\[\s*[\w+\s*,]*\s*\w+\s*\]|\[\s*\] {return 'ARRAY';}
 <<EOF>>                      {return 'EOF';}
 
 /lex
@@ -63,6 +64,8 @@ value
     : INTEGER
         {$$ = Number(yytext);}
     | STRING
+        {$$ = yytext;}
+    | ARRAY
         {$$ = yytext;}
     | VAR
         {$$ = "_helpers['getIn'](_env, '" + yytext + "')";}

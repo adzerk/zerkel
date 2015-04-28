@@ -86,3 +86,6 @@ describe 'Language tests', ->
   makeTest '$foo.bar = 1', {"$foo": {bar: 1}}, true
   makeTest '$foo.bar.baz = 1', {"$foo": {bar: {baz: 1}}}, true
   makeTest '$foo.bar.baz = 1', {"$foo": {bar: {baz: 2}}}, false
+  makeTest '[111, 2] contains foo', {foo: 111}, true
+  makeTest '[ 11 , 22 ] contains foo', {foo: 3}, false
+  makeTest '[    11   ,  22      ]  contains foo', {foo: 3}, false
