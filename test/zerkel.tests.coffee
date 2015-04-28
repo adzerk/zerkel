@@ -33,6 +33,14 @@ describe 'Language tests', ->
     it "#{query} with #{JSON.stringify(bindings)} should be #{expected}", ->
       assert.equal expected, compiler.compile(query)(bindings)
 
+  makeParserTest = (query, shouldParse) ->
+    if shouldParse
+      it "#{query} should be parsed", ->
+        assert.doesNotThrow(-> compiler.compile(query))
+    else
+      it "#{query} should throw a parser exception", ->
+        assert.throws(-> compiler.compile(query))
+
   makeTest 'x > 1', {x: 2}, true
   makeTest 'x>1', {x: 1}, false
   makeTest '_x>1', {_x: 1}, false
@@ -86,3 +94,24 @@ describe 'Language tests', ->
   makeTest '$foo.bar = 1', {"$foo": {bar: 1}}, true
   makeTest '$foo.bar.baz = 1', {"$foo": {bar: {baz: 1}}}, true
   makeTest '$foo.bar.baz = 1', {"$foo": {bar: {baz: 2}}}, false
+  makeTest '[111, 2] contains foo', {foo: 111}, true
+  makeTest '[ 11 , 22 ] contains foo', {foo: 3}, false
+  makeTest '[    11   ,  22      ]  contains foo', {foo: 3}, false
+  makeTest '[3,22] contains foo', {foo: 3}, true
+  makeParserTest '[bar, baz] contains bar', false
+  makeParserTest '[] contains bar', true
+  makeParserTest '[,,,] contains bar', false
+  makeParserTest '[1,,,2] contains bar', false
+  makeParserTest '[1,] contains bar', false
+  makeParserTest '[1 2] contains bar', false
+  makeParserTest '[1223,-45   ,678] contains bar', true
+  makeParserTest '["1223","-45"   ,678] contains bar', true
+  makeParserTest '["1223","-45 is a cool number"   ,678] contains bar', true
+  makeParserTest '[-] contains foo', false
+  makeParserTest '[123,-,2345] contains foo', false
+  makeParserTest '[123,----,2345] contains foo', false
+  makeTest '["lox",22] contains bagels', {bagels: "lox", jotnar: 292}, true
+  makeTest '["herring",22] contains bagels', {bagels: "lox", jotnar: 292}, false
+  makeTest '["lox",292] contains bagels', {bagels: "lox", jotnar: 292}, true
+
+
