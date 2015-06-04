@@ -28,7 +28,9 @@ module.exports.getIn = getIn = (env, varName) ->
 
 module.exports.helpers = helpers = {match: match, getIn: getIn}
 
-module.exports.compile = (query) ->
-  body = "return " + parser.parse(query)
-  fn = new Function('_helpers', '_env', body)
+module.exports.makePredicate = makePredicate = (body) ->
+  fn = new Function('_helpers', '_env', "return " + body)
   return (env) -> Boolean fn helpers, env
+
+module.exports.compile = (query) ->
+  return makePredicate(parser.parse(query))
