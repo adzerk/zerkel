@@ -86,6 +86,9 @@ describe 'Language tests', ->
   "foo" = x', {x: "foo"}, true
   makeTest 'x like "foo*"', {x: "foobar"}, true
   makeTest 'x like "foo*"', {x: "foo"}, false
+  makeTest 'x like "*bar*"', {x: "foobarbaz"}, true
+  makeTest 'x like "*bar*"', {x: "bar"}, false
+  makeTest 'x like "*bar*"', {x: "foobazbaf"}, false
   makeTest 'array contains "Foo"', {}, false
   makeTest 'foo.bar = 1', {foo: {bar: 1}}, true
   makeTest 'foo.bar = zip', {foo: {bar: 1}, zip: 1}, true
