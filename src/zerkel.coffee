@@ -7,7 +7,7 @@ module.exports.match = match = (val, pattern) ->
     val = pattern
   if pattern == '*' then return true
   if pattern[0] == '*' and pattern[pattern.length - 1] == '*'
-    pattern = pattern[1..-3]
+    pattern = pattern[1..-2]
     return (val.indexOf(pattern) >= 0) and val.length > pattern.length + 1
   if pattern[0] == '*'
     pattern = pattern[1..-1]
