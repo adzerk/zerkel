@@ -47,6 +47,20 @@ matchFn {user: {name: 'bob', location: 'open field west of a white house'}} # tr
 matchFn {user: {name: 'alice', location: 'middle earth'}} # false
 ```
 
+###Gzip
+Set the `parser.MIN_GZIP_SIZE` to a number, and if the length of the compiled
+JavaScript is greater than that it will be gzipped and base64 encoded, with
+`GZ:` prepended. The `zerkel#makePredicate` function will unzip automatically
+as necessary.
+
+```coffeescript
+parser = require 'zerkel-parser'
+
+parser.MIN_GZIP_SIZE = 50
+parser.parse 'foo = 42'              # _helpers['getIn'](_env, 'foo')==42'
+parser.parse '[42, 43] contains foo' # GZ:H4sIAAAAAAAAA9OINjHSMTGOVVODMvQy81JSK/zTNOIzUnMKUouKo9XTU0s889RjNeJT88p0FNTT8vPVNTUV7GwVDDQBm8CsuD8AAAA=
+```
+
 ###Status
 [![Build Status](https://travis-ci.org/adzerk/zerkel.png?branch=master)](https://travis-ci.org/adzerk/zerkel)
 

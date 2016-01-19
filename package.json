@@ -1,10 +1,11 @@
 {
   "name": "zerkel",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "A compiler for the zerkel language",
   "dependencies": {
     "coffee-script": "1.7.1",
-    "browserify": "2.22.0"
+    "browserify": "2.22.0",
+    "node-zlib-backport": "0.11.15"
   },
   "devDependencies": {
     "chai": "1.2.0",
