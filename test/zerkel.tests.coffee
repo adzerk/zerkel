@@ -1,5 +1,6 @@
 assert = require('chai').assert
 compiler = require '../'
+parser   = compiler.parser
 
 describe 'Match helper', ->
   makeTest = (a, b, expected) ->
@@ -117,4 +118,31 @@ describe 'Language tests', ->
   makeTest '["herring",22] contains bagels', {bagels: "lox", jotnar: 292}, false
   makeTest '["lox",292] contains bagels', {bagels: "lox", jotnar: 292}, true
 
+describe "Parser tests", ->
 
+  parser.MIN_GZIP_SIZE = 50
+
+  describe "small zerkel queries", ->
+    q = 'foo = 42'
+    c = parser.parse q
+    p = compiler.makePredicate c
+
+    it "should not be gzipped", ->
+      assert(c.match(/^GZ:/) is null)
+
+    it "should evaluate correctly", ->
+      assert(p({foo:42}) is true)
+      assert(p({foo:"bar"}) is false)
+
+  describe "large zerkel queries", ->
+    q = '[42, 43] contains foo'
+    c = parser.parse q
+    p = compiler.makePredicate c
+
+    it "should be gzipped", ->
+      assert(c.match(/^GZ:/) isnt null)
+
+    it "should evaluate correctly", ->
+      assert(p({foo:42}) is true)
+      assert(p({foo:43}) is true)
+      assert(p({foo:"bar"}) is false)

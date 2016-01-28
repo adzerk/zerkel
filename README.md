@@ -2,17 +2,26 @@
 An adzerk-based query-ish language.
 
 ###Language
-Zerkel exposes basic logic operators. The included operators are:
- * AND
- * OR
- * NOT
- * =
- * <> (not equal)
- * >
- * <
- * >=
- * <=
- * CONTAINS
+Zerkel provides primitive integer and string literals, identifiers, set
+literals, and a selection of boolean operations:
+
+Types:
+
+ * integer     &mdash; `42`
+ * string      &mdash; `"foo"`
+ * identifier  &mdash; `count`
+ * set         &mdash; `[42, "foo"]`
+
+Operations:
+
+ * = &mdash; `foo = 42`
+ * <> (not equal) &mdash; `foo <> "bar"`
+ * > &mdash; `foo > 42`
+ * < &mdash; `foo < 42`
+ * >= &mdash; `foo >= 42`
+ * <= &mdash; `foo <= 42`
+ * LIKE &mdash; `foo LIKE "ba*"`
+ * CONTAINS &mdash; `[42, 43] CONTAINS foo`
 
 Thus, queries may be written like:
 
