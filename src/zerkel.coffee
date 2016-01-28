@@ -1,4 +1,5 @@
 parser = require './zerkel-parser'
+zlib   = require 'node-zlib-backport'
 
 module.exports.match = match = (val, pattern) ->
   if val.indexOf('*') >= 0
@@ -29,6 +30,8 @@ module.exports.getIn = getIn = (env, varName) ->
 module.exports.helpers = helpers = {match: match, getIn: getIn}
 
 module.exports.makePredicate = makePredicate = (body) ->
+  if body.substr(0, 3) is "GZ:"
+    body = zlib.unzipSync(new Buffer(body.substr(3), 'base64')).toString()
   fn = new Function('_helpers', '_env', "return " + body)
   return (env) -> Boolean fn helpers, env
 
