@@ -1,5 +1,5 @@
 parser = require './zerkel-parser'
-zlib   = require 'node-zlib-backport'
+zlib   = require 'zlib'
 
 module.exports.match = match = (val, pattern) ->
   if val.indexOf('*') >= 0

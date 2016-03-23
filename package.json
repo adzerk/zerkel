@@ -1,17 +1,17 @@
 {
   "name": "zerkel",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "A compiler for the zerkel language",
   "dependencies": {
     "coffee-script": "1.7.1",
-    "browserify": "2.22.0",
-    "node-zlib-backport": "0.11.15"
+    "browserify": "2.22.0"
   },
   "devDependencies": {
     "chai": "1.2.0",
     "mocha": "1.4.0",
     "jison": "0.4.13"
   },
+  "engine": "node >= 5.0.x",
   "scripts": {
     "test": "node_modules/.bin/mocha -R dot"
   }

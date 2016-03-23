@@ -3,7 +3,7 @@ SHA = `git rev-parse HEAD`
 all: parser browserify
 
 parser:
-	./node_modules/.bin/pegjs ./src/zerkel-parser.pegjs ./src/zerkel-parser.js
+	./node_modules/.bin/jison ./src/zerkel-parser.jison -o ./src/zerkel-parser.js
 
 browserify:
 	mkdir -p build
