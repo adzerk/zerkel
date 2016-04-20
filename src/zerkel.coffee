@@ -1,20 +1,27 @@
 parser = require './zerkel-parser'
 zlib   = require 'node-zlib-backport'
 
+# See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions?redirectlocale=en-US&redirectslug=JavaScript%2FGuide%2FRegular_Expressions
+escapeRegExp = (string) ->
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); # $& means the whole matched string
+
 module.exports.match = match = (val, pattern) ->
-  if val.indexOf('*') >= 0
-    x = pattern
-    pattern = val
-    val = pattern
-  if pattern == '*' then return true
-  if pattern[0] == '*' and pattern[pattern.length - 1] == '*'
-    pattern = pattern[1..-2]
-    return (val.indexOf(pattern) >= 0) and val.length > pattern.length + 1
-  if pattern[0] == '*'
-    pattern = pattern[1..-1]
-    return (val.indexOf(pattern) == val.length - pattern.length) and val.length > pattern.length
-  if pattern[pattern.length - 1] == '*'
-    return (val.indexOf(pattern[0..-2]) == 0) and val.length > pattern.length
+  if Array.isArray(val)
+    for v in val
+      return true if match(v, pattern)
+    return false
+  else if Array.isArray(pattern)
+    for p in pattern
+      return true if match(val, p)
+    return false
+  else
+    if val.indexOf('*') >= 0
+      [pattern, val] = [val, pattern] # swap pattern and val
+    return true if pattern == '*'
+    head = '^' + (if pattern[0] == "*" then '.+' else '')
+    tail = (if pattern[pattern.length - 1] == "*" then '.+' else '') + '$'
+    re = head + escapeRegExp(pattern.replace(/(^\*|\*$)/g, '')) + tail
+    return new RegExp(re).test(val)
 
 module.exports.getIn = getIn = (env, varName) ->
   levels = varName.split(".")

@@ -86,10 +86,18 @@ describe 'Language tests', ->
   makeTest '// and this!\n 
   "foo" = x', {x: "foo"}, true
   makeTest 'x like "foo*"', {x: "foobar"}, true
+  makeTest '"foo*" like x', {x: "foobar"}, true
   makeTest 'x like "foo*"', {x: "foo"}, false
   makeTest 'x like "*bar*"', {x: "foobarbaz"}, true
   makeTest 'x like "*bar*"', {x: "bar"}, false
   makeTest 'x like "*bar*"', {x: "foobazbaf"}, false
+  makeTest '"*bar*" like x', {x: "foobazbaf"}, false
+  makeTest '["foo", "foobarbaz", "baz"] like "*bar*"', {}, true
+  makeTest '["foo", "foobarbaz", "baz"] like "*barf*"', {}, false
+  makeTest '"*bar*" like ["foo", "foobarbaz", "baz"]', {}, true
+  makeTest '"*barf*" like ["foo", "foobarbaz", "baz"]', {}, false
+  makeTest '["*shmoo*", "*bar*"] like ["foo", "foobarbaz", "baz"]', {}, true
+  makeTest '["*shmoo*", "*barf*"] like ["foo", "foobarbaz", "baz"]', {}, false
   makeTest 'array contains "Foo"', {}, false
   makeTest 'foo.bar = 1', {foo: {bar: 1}}, true
   makeTest 'foo.bar = zip', {foo: {bar: 1}, zip: 1}, true
