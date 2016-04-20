@@ -61,6 +61,12 @@ e
         {$$ = "(" + $1 + "&&" + $1 + ".indexOf(" + $3 + ")" + " >= 0)"; }
     | value 'LIKE' value
         {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
+    | arrayvalue 'LIKE' value
+        {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
+    | value 'LIKE' arrayvalue
+        {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
+    | arrayvalue 'LIKE' arrayvalue
+        {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
     | value
         {$$ = $1;}
     ;
