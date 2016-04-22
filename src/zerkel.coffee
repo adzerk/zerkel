@@ -1,21 +1,24 @@
-parser = require './zerkel-parser'
-zlib   = require 'node-zlib-backport'
+parser = require('./zerkel-parser') || window?.zerkelParser
+zlib   = require('node-zlib-backport')
+
+# https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+requote = (s) -> s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 
 module.exports.match = match = (val, pattern) ->
-  if val.indexOf('*') >= 0
-    x = pattern
-    pattern = val
-    val = pattern
-  if pattern == '*' then return true
-  if pattern[0] == '*' and pattern[pattern.length - 1] == '*'
-    pattern = pattern[1..-2]
-    return (val.indexOf(pattern) >= 0) and val.length > pattern.length + 1
-  if pattern[0] == '*'
-    pattern = pattern[1..-1]
-    return (val.indexOf(pattern) == val.length - pattern.length) and val.length > pattern.length
-  if pattern[pattern.length - 1] == '*'
-    return (val.indexOf(pattern[0..-2]) == 0) and val.length > pattern.length
+  return true if pattern is '*'
+  pat = requote(pattern.replace(/(^\*|\*$)/g, ''))
+  pat = '.+' + pat if pattern[0] is '*'
+  pat = pat + '.+' if pattern[pattern.length - 1] is '*'
+  new RegExp(pat).test(val)
 
+module.exports.regex = regex = (val, re) ->
+  new RegExp(re).test(val)
+
+module.exports.idxof = idxof = (val, x) ->
+  if val and (idx = val.indexOf) and idx is String.prototype.indexOf or idx is Array.prototype.indexOf
+    val.indexOf(x) >= 0
+
+# deprecated
 module.exports.getIn = getIn = (env, varName) ->
   levels = varName.split(".")
   out = env
@@ -27,7 +30,11 @@ module.exports.getIn = getIn = (env, varName) ->
     out = out[level]
   return out
 
-module.exports.helpers = helpers = {match: match, getIn: getIn}
+module.exports.helpers = helpers =
+  match: match
+  getIn: getIn
+  regex: regex
+  idxof: idxof
 
 module.exports.makePredicate = makePredicate = (body) ->
   if body.substr(0, 3) is "GZ:"

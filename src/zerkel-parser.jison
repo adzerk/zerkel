@@ -7,30 +7,37 @@
 "and"|"AND"                  {return 'AND';}
 "or"|"OR"                    {return 'OR';}
 "not"|"NOT"                  {return 'NOT';}
+"=~"                         {return '=~';}
+"!~"                         {return '!~';}
 "="                          {return '=';}
 "<>"                         {return '<>';}
-"<="|">="|"<"|">"            {return 'LTGT';}
+"<="                         {return '<=';}
+">="                         {return '>=';}
+"<"                          {return '<';}
+">"                          {return '>';}
 "contains"|"CONTAINS"        {return 'CONTAINS';}
 "like"|"LIKE"                {return 'LIKE';}
 [\-]?[0-9]+                  {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
-[\$A-Za-z_]+([A-Za-z0-9_\.]+)*  {return 'VAR';}
-"("                          {return 'OPEN';}
-")"                          {return 'CLOSE';}
-"["                          {return 'OPENBRACKET';}
-"]"                          {return 'CLOSEBRACKET';}
-","                          {return 'COMMA';}
+[A-Za-z_$]([A-Za-z0-9_$]+)*  {return 'VAR';}
+"("                          {return '(';}
+")"                          {return ')';}
+"["                          {return '[';}
+"]"                          {return ']';}
+","                          {return ',';}
+"."                          {return '.';}
 <<EOF>>                      {return 'EOF';}
 
 /lex
 
 /* operator associations and precedence */
 
-%left '=' '<>'
-%left 'LTGT'
-%left 'AND' 'OR'
-%left 'NOT'
-%left 'CONTAINS' 'LIKE'
+%left DOT
+%left '=' '<>' '=~' '!~'
+%left '<=' '>=' '<' '>'
+%left AND OR
+%left NOT
+%left CONTAINS LIKE
 
 %start expressions
 
@@ -41,26 +48,36 @@ expressions
         %{ return ($1.length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('node-zlib-backport').gzipSync(new Buffer(""+$1)).toString('base64') : $1; }
     ;
 e
-    : 'NOT' e
+    : NOT e
         {$$ = "!" + $2;}
-    | 'OPEN' e 'CLOSE'
+    | '(' e ')'
         {$$ = "(" + $2 + ")";}
-    | e 'AND' e
+    | e AND e
         {$$ = $1 + " && " + $3;}
-    | e 'OR' e
+    | e OR e
         {$$ = $1 + " || " + $3;}
     | value '=' value
         {$$ = $1 + "==" + $3;}
     | value '<>' value
         {$$ = $1 + "!=" + $3;}
-    | value 'LTGT' value
+    | value '<=' value
         {$$ = $1 + $2 + $3}
-    | arrayvalue 'CONTAINS' value
-        {$$ = "(" + $1 + "&&" + $1 + ".indexOf(" + $3 + ")" + " >= 0)"; }
-    | value 'CONTAINS' value
-        {$$ = "(" + $1 + "&&" + $1 + ".indexOf(" + $3 + ")" + " >= 0)"; }
-    | value 'LIKE' value
+    | value '>=' value
+        {$$ = $1 + $2 + $3}
+    | value '<' value
+        {$$ = $1 + $2 + $3}
+    | value '>' value
+        {$$ = $1 + $2 + $3}
+    | arrayvalue CONTAINS value
+        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+    | value CONTAINS value
+        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+    | value LIKE value
         {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
+    | value '=~' STRING
+        {$$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
+    | value '!~' STRING
+        {$$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
     | value
         {$$ = $1;}
     ;
@@ -69,15 +86,15 @@ arrayitems
         {$$ = $1;}
     | STRING
         {$$ = $1;}
-    | arrayitems COMMA INTEGER
+    | arrayitems ',' INTEGER
         {$$ = $1+$2+$3;}
-    | arrayitems COMMA STRING
+    | arrayitems ',' STRING
         {$$ = $1+$2+$3;}
     ;
 arrayvalue
-    : 'OPENBRACKET' 'CLOSEBRACKET'
+    : '[' ']'
         {$$ = $1+$2;}
-    | 'OPENBRACKET' arrayitems 'CLOSEBRACKET'
+    | '[' arrayitems ']'
         {$$ = $1+$2+$3;}
     ;
 value
@@ -85,8 +102,14 @@ value
         {$$ = Number(yytext);}
     | STRING
         {$$ = yytext;}
-    | VAR
-        {$$ = "_helpers['getIn'](_env, '" + yytext + "')";}
+    | variable
+        {$$ = $1;}
+    ;
+variable
+    : VAR
+        {$$ = "_env." + yytext;}
+    | variable '.' VAR
+        {$$ = "(" + $1 + "||{})." + $3;}
     ;
 
 %%

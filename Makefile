@@ -1,10 +1,12 @@
-SHA = `git rev-parse HEAD`
+.PHONY: test demo
 
-all: parser browserify
+src/zerkel-parser.js: src/zerkel-parser.jison
+	(cd src && ../node_modules/.bin/jison zerkel-parser.jison)
 
-parser:
-	./node_modules/.bin/pegjs ./src/zerkel-parser.pegjs ./src/zerkel-parser.js
+demo/demo.js: src/zerkel-parser.js src/zerkel.coffee
+	bash -c "cat $< <(./node_modules/.bin/coffee -p -c src/) > $@"
 
-browserify:
-	mkdir -p build
-	./node_modules/.bin/browserify -r ./src/zerkel-parser.js:zerkel-parser -o ./build/zerkel-parser-$(SHA).js
+test: src/zerkel-parser.js
+	mocha
+
+demo: demo/demo.js

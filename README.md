@@ -2,26 +2,30 @@
 An adzerk-based query-ish language.
 
 ###Language
-Zerkel provides primitive integer and string literals, identifiers, set
-literals, and a selection of boolean operations:
+Zerkel provides primitive integer and string literals, identifiers, sets, and a
+selection of boolean operators:
 
-Types:
-
- * integer     &mdash; `42`
- * string      &mdash; `"foo"`
- * identifier  &mdash; `count`
- * set         &mdash; `[42, "foo"]`
-
-Operations:
-
- * = &mdash; `foo = 42`
- * <> (not equal) &mdash; `foo <> "bar"`
- * > &mdash; `foo > 42`
- * < &mdash; `foo < 42`
- * >= &mdash; `foo >= 42`
- * <= &mdash; `foo <= 42`
- * LIKE &mdash; `foo LIKE "ba*"`
- * CONTAINS &mdash; `[42, 43] CONTAINS foo`
+| operator/type | comment | examples |
+|---------------|---------|----------|
+| integers      | syntax                      | `42`, `-7` |
+| strings       | syntax                      | `"foo"`, `"C:\\Windows\System32"`, `"^(foo|bar)\s+"` |
+| variables     | syntax                      | `count`, `_foo_bar`, `$location.postalCode` |
+| **.**         | property accessor           | `$location.postalCode`, `foo.bar.baz` |
+| **[**, **]**  | set construction            | `[42, "foo"]` |
+| **(**, **)**  | expression grouping         | `x < 100 AND (y < 50 OR z < 10)` |
+| **=**         |                             | `foo = 42` |
+| **<>**        | not equal                   | `foo <> "bar"` |
+| **=~**        | regex match                 | `foo =~ "^(some|regular|expression).*$"` |
+| **!~**        | not regex match             | `foo !~ "^(some|regular|expression).*$"` |
+| **>**         |                             | `foo > 42` |
+| **<**         |                             | `foo < 42` |
+| **>=**        |                             | `foo >= 42` |
+| **<=**        |                             | `foo <= 42` |
+| **AND**       |                             | `foo = 42 AND bar < 100` |
+| **OR**        |                             | `foo = 42 OR bar < 100` |
+| **NOT**       |                             | `NOT (bar =~ "^foo")` |
+| **LIKE**      | wildcard match              | `foo LIKE "ba*"` |
+| **CONTAINS**  | set membership / substring  | `["foo", "bar"] CONTAINS "foo"`, `"foobar" CONTAINS "foo"` |
 
 Thus, queries may be written like:
 
@@ -31,6 +35,11 @@ keywords contains "awesome"
 ```
 
 All operators are available in upper and lowercase forms.
+
+###Demo
+
+Check out the live [Zerkel scratchpad][demo] demo app and try some zerkel
+queries in your browser.
 
 ###Usage
 Queries can executed in coffeescript/javascript using the zerkel module, like so:
@@ -75,3 +84,5 @@ parser.parse '[42, 43] contains foo' # GZ:H4sIAAAAAAAAA9OINjHSMTGOVVODMvQy81JSK/
 
 ###License
 Apache 2.0
+
+[demo]: https://adzerk.github.io/zerkel/
