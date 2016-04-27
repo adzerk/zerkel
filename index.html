@@ -120,7 +120,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
     </div>
     <script>
       function setHash() {
-        location.hash = "#"+JSON.stringify({zerkel:$("#zerkel").val(),env:$("#env").val()});
+        location.hash = "#"+encodeURI(JSON.stringify({zerkel:$("#zerkel").val(),env:$("#env").val()}));
       }
       function compute() {
         var result, zerkel, env, error = false;
@@ -149,7 +149,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
       $(window).on("hashchange", function(e) {
         var state;
         try {
-          state = JSON.parse(location.hash.substr(1));
+          state = JSON.parse(decodeURI(location.hash.substr(1)));
           $("#zerkel").val(state.zerkel);
           $("#env").val(state.env);
           compute();
