@@ -8,7 +8,7 @@ selection of boolean operators:
 | operator/type | comment | examples |
 |---------------|---------|----------|
 | integers      | syntax                      | `42`, `-7` |
-| strings       | syntax                      | `"foo"`, `"C:\\Windows\System32"`, `"^(foo|bar)\s+"` |
+| strings       | syntax                      | `"foo"`, `"C:\\\\Windows\\System32"`, `"^(foo|bar)\s+"` |
 | variables     | syntax                      | `count`, `_foo_bar`, `$location.postalCode` |
 | **.**         | property accessor           | `$location.postalCode`, `foo.bar.baz` |
 | **[**, **]**  | set construction            | `[42, "foo"]` |
