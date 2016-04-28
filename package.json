@@ -1,6 +1,6 @@
 {
   "name": "zerkel",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "A compiler for the zerkel language",
   "dependencies": {
     "coffee-script": "1.7.1",
