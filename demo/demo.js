@@ -110,7 +110,7 @@ case 13:this.$ = "_helpers['idxof'](" + $$[$0-2] + "," + $$[$0] + ")";
 break;
 case 14:this.$ = "_helpers['match'](" + $$[$0-2] + "," + $$[$0] + ")";
 break;
-case 15:this.$ = "_helpers['regex'](" + $$[$0-2] + "," + JSON.stringify($$[$0].substr(1, $$[$0].length - 2)) + ")";
+case 15:new RegExp(JSON.stringify($$[$0].substr(1, $$[$0].length - 2))); this.$ = "_helpers['regex'](" + $$[$0-2] + "," + JSON.stringify($$[$0].substr(1, $$[$0].length - 2)) + ")";
 break;
 case 16:this.$ = "!_helpers['regex'](" + $$[$0-2] + "," + JSON.stringify($$[$0].substr(1, $$[$0].length - 2)) + ")";
 break;

@@ -75,9 +75,9 @@ e
     | value LIKE value
         {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
     | value '=~' STRING
-        {$$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
+        {new RegExp($3.substr(1, $3.length - 2)); $$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
     | value '!~' STRING
-        {$$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
+        {new RegExp($3.substr(1, $3.length - 2)); $$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
     | value
         {$$ = $1;}
     ;
