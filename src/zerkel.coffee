@@ -1,5 +1,5 @@
 parser = require('./zerkel-parser') || window?.zerkelParser
-zlib   = require('node-zlib-backport')
+zlib   = require 'zlib'
 
 # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 requote = (s) -> s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")

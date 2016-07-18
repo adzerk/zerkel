@@ -45,7 +45,7 @@
 
 expressions
     : e EOF
-        %{ return ($1.length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('node-zlib-backport').gzipSync(new Buffer(""+$1)).toString('base64') : $1; }
+        %{ return ($1.length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(new Buffer(""+$1)).toString('base64') : $1; }
     ;
 e
     : NOT e
