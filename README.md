@@ -51,7 +51,7 @@ query = 'count > 43 and (user = "bob" or user = "alice")'
 matchFn = zerkel.compile query
 matchFn {count: 50, user: 'bob'} # true
 matchFn {count: 12, user: 'alice'} # false
-matchFn {count: 50, user: 'George Michael'} # terribly, unfortunately, false
+matchFn {count: 50, user: 'george'} # false
 ```
 
 You can also access properties on passed in objects, like so:
