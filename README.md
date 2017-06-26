@@ -1,5 +1,5 @@
 # zerkel
-An adzerk-based query-ish language.
+The Adzerk custom targeting query language.
 
 ### Language
 Zerkel provides primitive integer and string literals, identifiers, sets, and a
