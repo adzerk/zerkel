@@ -1,4 +1,4 @@
-# zerkel
+# zerkel [![Build Status](https://travis-ci.org/adzerk/zerkel.png?branch=master)](https://travis-ci.org/adzerk/zerkel)
 The Adzerk custom targeting query language.
 
 ### Language
@@ -78,9 +78,6 @@ parser.MIN_GZIP_SIZE = 50
 parser.parse 'foo = 42'              # _helpers['getIn'](_env, 'foo')==42'
 parser.parse '[42, 43] contains foo' # GZ:H4sIAAAAAAAAA9OINjHSMTGOVVODMvQy81JSK/zTNOIzUnMKUouKo9XTU0s889RjNeJT88p0FNTT8vPVNTUV7GwVDDQBm8CsuD8AAAA=
 ```
-
-### Status
-[![Build Status](https://travis-ci.org/adzerk/zerkel.png?branch=master)](https://travis-ci.org/adzerk/zerkel)
 
 ### License
 Apache 2.0
