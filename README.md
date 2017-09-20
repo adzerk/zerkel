@@ -7,25 +7,25 @@ selection of boolean operators:
 
 | operator/type | comment | examples |
 |---------------|---------|----------|
-| integers      | syntax                      | `42`, `-7` |
-| strings       | syntax                      | `"foo"`, `"C:\\\\Windows\\System32"`, `"^(foo|bar)\s+"` |
-| variables     | syntax                      | `count`, `_foo_bar`, `$location.postalCode` |
-| **.**         | property accessor           | `$location.postalCode`, `foo.bar.baz` |
-| **[**, **]**  | set construction            | `[42, "foo"]` |
-| **(**, **)**  | expression grouping         | `x < 100 AND (y < 50 OR z < 10)` |
-| **=**         |                             | `foo = 42` |
-| **<>**        | not equal                   | `foo <> "bar"` |
-| **=~**        | regex match                 | `foo =~ "^(some|regular|expression).*$"` |
-| **!~**        | not regex match             | `foo !~ "^(some|regular|expression).*$"` |
-| **>**         |                             | `foo > 42` |
-| **<**         |                             | `foo < 42` |
-| **>=**        |                             | `foo >= 42` |
-| **<=**        |                             | `foo <= 42` |
-| **AND**       |                             | `foo = 42 AND bar < 100` |
-| **OR**        |                             | `foo = 42 OR bar < 100` |
-| **NOT**       |                             | `NOT (bar =~ "^foo")` |
-| **LIKE**      | wildcard match              | `foo LIKE "ba*"` |
-| **CONTAINS**  | set membership / substring  | `["foo", "bar"] CONTAINS "foo"`, `"foobar" CONTAINS "foo"` |
+| *integers*        | syntax                      | `42`, `-7` |
+| *strings*         | syntax                      | `"foo"`, `"C:\\\\Windows\\System32"`, `"^(foo|bar)\s+"` |
+| *variables*       | syntax                      | `count`, `_foo_bar`, `$location.postalCode` |
+| **`.`**           | property accessor           | `$location.postalCode`, `foo.bar.baz` |
+| **`[`**, **`]`**  | set construction            | `[42, "foo"]` |
+| **`(`**, **`)`**  | expression grouping         | `x < 100 AND (y < 50 OR z < 10)` |
+| **`=`**           |                             | `foo = 42` |
+| **`<>`**          | not equal                   | `foo <> "bar"` |
+| **`=~`**          | regex match                 | `foo =~ "^(some\|regular\|expression).*$"` |
+| **`!~`**          | not regex match             | `foo !~ "^(some\|regular\|expression).*$"` |
+| **`>`**           |                             | `foo > 42` |
+| **`<`**           |                             | `foo < 42` |
+| **`>=`**          |                             | `foo >= 42` |
+| **`<=`**          |                             | `foo <= 42` |
+| **`AND`**         |                             | `foo = 42 AND bar < 100` |
+| **`OR`**          |                             | `foo = 42 OR bar < 100` |
+| **`NOT`**         |                             | `NOT (bar =~ "^foo")` |
+| **`LIKE`**        | wildcard match              | `foo LIKE "ba*"` |
+| **`CONTAINS`**    | set membership / substring  | `["foo", "bar"] CONTAINS "foo"`, `"foobar" CONTAINS "foo"` |
 
 Thus, queries may be written like:
 
