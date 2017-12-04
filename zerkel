@@ -1,0 +1,16 @@
+#!/usr/bin/env coffee
+
+query = process.argv[2]
+usage = """
+Usage: zerkel [-h|--help]
+       zerkel <query>
+
+Prints compiled JavaScript for the Zerkel <query> to stdout.
+"""
+
+if not query or query is '-h' or query is '--help'
+  console.log(usage)
+  process.exit(0)
+
+zerkel = require('./')
+console.log(zerkel.parser.parse(process.argv[2]))

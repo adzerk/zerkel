@@ -1,12 +1,21 @@
-.PHONY: test demo
+.PHONY: all test demo runtime
 
-src/zerkel-parser.js: src/zerkel-parser.jison
-	(cd src && ../node_modules/.bin/jison zerkel-parser.jison)
+export PATH := ./node_modules/.bin:$(PATH)
 
-demo/demo.js: src/zerkel-parser.js src/zerkel.coffee
-	bash -c "cat $< <(./node_modules/.bin/coffee -p -c src/) > $@"
+%.js: %.jison
+	jison $< -o $@
+
+%.gz: %
+	cat $< |gzip -9c > $@
+
+all: src/zerkel-parser.js demo/demo.js dist/zerkel-runtime.min.js.gz
 
 test: src/zerkel-parser.js
 	mocha
 
-demo: demo/demo.js
+demo/demo.js: src/zerkel-parser.js src/zerkel.coffee
+	bash -c "cat $< <(./node_modules/.bin/coffee -pc src/) > $@"
+
+dist/zerkel-runtime.min.js: src/zerkel-runtime.js
+	mkdir -p dist
+	uglifyjs $< -c -m --mangle-props reserved=[module,exports,zerkelRuntime,makePredicate,match,regex,idxof,getIn] > $@

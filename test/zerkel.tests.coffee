@@ -3,6 +3,7 @@ compiler = require('../')
 version  = require('../package.json').version
 fs       = require('fs')
 parser   = compiler.parser
+makePredicate = require('../dist/zerkel-runtime.min.js').makePredicate
 
 map = (f, xs) ->
   ret = []
@@ -42,7 +43,7 @@ runTest = ({zerkel, compiled, env, expected}) ->
     else
       describe "with #{JSON.stringify(env)}", ->
         it "should be #{expected}", ->
-          assert.equal expected, compiler.makePredicate(compiled)(env)
+          assert.equal expected, makePredicate(compiled)(env)
 
 tests = compileTests [
   ['"foo" like "Foo*"', {}, false]

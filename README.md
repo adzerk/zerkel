@@ -1,7 +1,9 @@
 # zerkel [![Build Status](https://travis-ci.org/adzerk/zerkel.png?branch=master)](https://travis-ci.org/adzerk/zerkel)
+
 The Adzerk custom targeting query language.
 
 ### Language
+
 Zerkel provides primitive integer and string literals, identifiers, sets, and a
 selection of boolean operators:
 
@@ -42,6 +44,7 @@ Check out the live [Zerkel scratchpad][demo] demo app and try some zerkel
 queries in your browser.
 
 ### Usage
+
 Queries can executed in coffeescript/javascript using the zerkel module, like so:
 
 ```coffeescript
@@ -65,7 +68,34 @@ matchFn {user: {name: 'bob', location: 'open field west of a white house'}} # tr
 matchFn {user: {name: 'alice', location: 'middle earth'}} # false
 ```
 
+## Clientside
+
+Precompiled a Zerkel querDies can be evaluated in a browser client, as well.
+
+In NodeJS:
+
+```coffeescript
+zerkel = require 'zerkel'
+
+precompiled = zerkel.parser.parse 'count > 43 and ["bob", "alice"] contains user'
+```
+
+In the client:
+
+```html
+<script src="dist/zerkel-runtime.min.js"></script>
+<script>
+var precompiled = '...'; // The precompiled query from NodeJS above.
+var predicateFn = zerkelRuntime.makePredicate(precompiled);
+var result      = predicateFn({count: 50, user: 'bob'});
+</script>
+```
+
+> **Note:** Gzip (see below) must be disabled when compiling expressions for
+> evaluation in the client (or handle it yourself).
+
 ### Gzip
+
 Set the `parser.MIN_GZIP_SIZE` to a number, and if the length of the compiled
 JavaScript is greater than that it will be gzipped and base64 encoded, with
 `GZ:` prepended. The `zerkel#makePredicate` function will unzip automatically
@@ -80,6 +110,9 @@ parser.parse '[42, 43] contains foo' # GZ:H4sIAAAAAAAAA9OINjHSMTGOVVODMvQy81JSK/
 ```
 
 ### License
-Apache 2.0
 
+Copyright © 2017 Adzerk, Inc.
+Distributed under the [Apache License, Version 2.0][apache].
+
+[apache]: https://www.apache.org/licenses/LICENSE-2.0
 [demo]: https://adzerk.github.io/zerkel/

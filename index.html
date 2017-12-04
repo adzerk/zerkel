@@ -132,7 +132,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
             error = "#env";
             throw e;
           }
-          result = JSON.stringify(module.exports.compile(zerkel)(env));
+          result = JSON.stringify(window.zerkel.compile(zerkel)(env));
         } catch (e) {
           if (! error) error = "#zerkel";
           result = e.message;
