@@ -70,7 +70,7 @@ matchFn {user: {name: 'alice', location: 'middle earth'}} # false
 
 ## Clientside
 
-Precompiled a Zerkel querDies can be evaluated in a browser client, as well.
+Precompiled a Zerkel queries can be evaluated in a browser client, as well.
 
 In NodeJS:
 
