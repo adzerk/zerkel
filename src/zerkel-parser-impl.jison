@@ -45,74 +45,79 @@
 
 expressions
     : e EOF
-        %{ return ($1.length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(new Buffer(""+$1)).toString('base64') : $1; }
+        {return $1;}
     ;
 e
     : NOT e
-        {$$ = "!" + $2;}
+        {$$ = ['not', $2];}
     | '(' e ')'
-        {$$ = "(" + $2 + ")";}
+        {$$ = $2;}
     | e AND e
-        {$$ = $1 + " && " + $3;}
+        {$$ = ['and', $1, $3];}
     | e OR e
-        {$$ = $1 + " || " + $3;}
+        {$$ = ['or', $1, $3];}
     | value '=' value
-        {$$ = $1 + "==" + $3;}
+        {$$ = ['eq', $1, $3];}
     | value '<>' value
-        {$$ = $1 + "!=" + $3;}
+        {$$ = ['ne', $1, $3];}
     | value '<=' value
-        {$$ = $1 + $2 + $3}
+        {$$ = ['le', $1, $3];}
     | value '>=' value
-        {$$ = $1 + $2 + $3}
+        {$$ = ['ge', $1, $3];}
     | value '<' value
-        {$$ = $1 + $2 + $3}
+        {$$ = ['lt', $1, $3];}
     | value '>' value
-        {$$ = $1 + $2 + $3}
+        {$$ = ['gt', $1, $3];}
     | arrayvalue CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+        {$$ = ['in', $1, $3];}
     | value CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+        {$$ = ['in', $1, $3];}
     | value LIKE value
-        {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
-    | value '=~' STRING
-        {new RegExp($3.substr(1, $3.length - 2)); $$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
-    | value '!~' STRING
-        {new RegExp($3.substr(1, $3.length - 2)); $$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
+        {$$ = ['like', $1, $3];}
+    | value '=~' string
+        {$$ = ['match', $1, $3];}
+    | value '!~' string
+        {$$ = ['nomatch', $1, $3];}
     | value
         {$$ = $1;}
     ;
 arrayitems
-    : INTEGER
-        {$$ = $1;}
-    | STRING
-        {$$ = $1;}
-    | arrayitems ',' INTEGER
-        {$$ = $1+$2+$3;}
-    | arrayitems ',' STRING
-        {$$ = $1+$2+$3;}
+    : integer
+        {$$ = [$1];}
+    | string
+        {$$ = [$1];}
+    | arrayitems ',' integer
+        {$$ = $1.concat([$3]);}
+    | arrayitems ',' string
+        {$$ = $1.concat([$3]);}
     ;
 arrayvalue
     : '[' ']'
-        {$$ = $1+$2;}
+        {$$ = ['array'];}
     | '[' arrayitems ']'
-        {$$ = $1+$2+$3;}
+        {$$ = ['array'].concat($2);}
     ;
 value
-    : INTEGER
-        {$$ = Number(yytext);}
-    | STRING
-        {$$ = yytext;}
+    : integer
+        {$$ = $1;}
+    | string
+        {$$ = $1;}
     | variable
         {$$ = $1;}
     ;
+integer
+    : INTEGER
+        {$$ = Number(yytext);}
+    ;
+string
+    : STRING
+        {$$ = yytext.substr(1, yytext.length - 2);}
+    ;
 variable
     : VAR
-        {$$ = "_env." + yytext;}
+        {$$ = ['var', yytext];}
     | variable '.' VAR
-        {$$ = "(" + $1 + "||{})." + $3;}
+        {$$ = $1.concat([$3]);}
     ;
 
 %%
-
-MIN_GZIP_SIZE = exports.MIN_GZIP_SIZE = Infinity;
-
