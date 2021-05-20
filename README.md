@@ -108,9 +108,23 @@ parser.parse 'foo = 42'              # _helpers['getIn'](_env, 'foo')==42'
 parser.parse '[42, 43] contains foo' # GZ:H4sIAAAAAAAAA9OINjHSMTGOVVODMvQy81JSK/zTNOIzUnMKUouKo9XTU0s889RjNeJT88p0FNTT8vPVNTUV7GwVDDQBm8CsuD8AAAA=
 ```
 
+### Development
+
+Prereqs:
+
+`npm install -g jison`
+
+To test:
+
+`make test`
+
+To package: 
+
+`make`
+
 ### License
 
-Copyright © 2017 Adzerk, Inc.
+Copyright © 2021 Kevel, Inc.
 Distributed under the [Apache License, Version 2.0][apache].
 
 [apache]: https://www.apache.org/licenses/LICENSE-2.0

@@ -3,10 +3,9 @@
 %%
 "/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
 "//".*($|\r\n|\r|\n)         {/* skip comments*/}
-\s+                          {/* skip whitespace */}
-"and"|"AND"                  {return 'AND';}
-"or"|"OR"                    {return 'OR';}
-"not"|"NOT"                  {return 'NOT';}
+\s"and"|\s"AND"              {return 'AND';}
+\s"or"|\s"OR"                {return 'OR';}
+"not"|"NOT"                  {return 'NOT';} 
 "=~"                         {return '=~';}
 "!~"                         {return '!~';}
 "="                          {return '=';}
@@ -15,8 +14,8 @@
 ">="                         {return '>=';}
 "<"                          {return '<';}
 ">"                          {return '>';}
-"contains"|"CONTAINS"        {return 'CONTAINS';}
-"like"|"LIKE"                {return 'LIKE';}
+\s"contains"|\s"CONTAINS"    {return 'CONTAINS';}
+\s"like"|\s"LIKE"            {return 'LIKE';}
 [\-]?[0-9]+                  {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
 [A-Za-z_$]([A-Za-z0-9_$]+)*  {return 'VAR';}
@@ -27,6 +26,7 @@
 ","                          {return ',';}
 "."                          {return '.';}
 <<EOF>>                      {return 'EOF';}
+\s+                          {/* skip whitespace */}
 
 /lex
 

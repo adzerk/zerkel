@@ -11,7 +11,7 @@ export PATH := ./node_modules/.bin:$(PATH)
 all: src/zerkel-parser.js demo/demo.js dist/zerkel-runtime.min.js.gz
 
 test: src/zerkel-parser.js
-	mocha
+	npm test
 
 demo/demo.js: src/zerkel-parser.js src/zerkel.coffee
 	bash -c "cat $< <(./node_modules/.bin/coffee -pc src/) > $@"
