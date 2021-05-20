@@ -156,14 +156,19 @@ tests = compileTests [
   ['1 = 1 or 1 = 2', {}, true]
   ['foo.or = 1', {foo: {or: 1}}, true]
   ['foo.and = 1', {foo: {and: 1}}, true]
+  ['foo.like = 1', {foo: {like: 1}}, true]
   ['foo.likely = 1', {foo: {likely: 1}}, true]
   ['foo.contains = 1', {foo: {contains: 1}}, true]
   ['foo.format = 1', {foo: {format: 1}}, true]
   ['foo.blandishment = 1', {foo: {blandishment: 1}}, true]
   ['foo.itcontainsmultitudes = 1', {foo: {itcontainsmultitudes: 1}}, true]
   ['foo.alike = 1', {foo: {alike: 1}}, true]
-#   ['foo.not = 1', {foo: {not: 1}}, true]
-  ['foo.donot = 1', {foo: {donot: 1}}, true]  
+  ['foo.not = 1', {foo: {not: 1}}, true]
+  ['foo.donot = 1', {foo: {donot: 1}}, true]
+  # Keywords cannot appear as root properties with the current grammar - these tests wouldn't pass
+  # ['or.foo = 1', {or: {foo: 1}}, true]
+  # ['and.foo = 1', {and: {foo: 1}}, true]
+  # Etc.
 ]
 
 fs.writeFileSync("test-data/#{version}.json", JSON.stringify(tests))

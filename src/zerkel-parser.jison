@@ -1,11 +1,13 @@
 /* lexical grammar */
 %lex
+%x selector
 %%
-"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
-"//".*($|\r\n|\r|\n)         {/* skip comments*/}
-\s"and"|\s"AND"              {return 'AND';}
-\s"or"|\s"OR"                {return 'OR';}
-"not"|"NOT"                  {return 'NOT';} 
+<INITIAL,selector>"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
+<INITIAL,selector>"//".*($|\r\n|\r|\n)         {/* skip comments*/}
+<INITIAL,selector>\s+                          {/* skip whitespace */}
+"and"|"AND"                  {return 'AND';}
+"or"|"OR"                    {return 'OR';}
+"not"|"NOT"                  {return 'NOT';}
 "=~"                         {return '=~';}
 "!~"                         {return '!~';}
 "="                          {return '=';}
@@ -14,20 +16,20 @@
 ">="                         {return '>=';}
 "<"                          {return '<';}
 ">"                          {return '>';}
-\s"contains"|\s"CONTAINS"    {return 'CONTAINS';}
-\s"like"|\s"LIKE"            {return 'LIKE';}
+"."                          {this.begin("selector"); return '.';}
+"contains"|"CONTAINS"        {return 'CONTAINS';}
+"like"|"LIKE"                {return 'LIKE';}
 [\-]?[0-9]+                  {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
 [A-Za-z_$]([A-Za-z0-9_$]+)*  {return 'VAR';}
+<selector>[A-Za-z_$]([A-Za-z0-9_$]+)*  {this.popState(); return 'VAR';}
+<selector>.                  { throw "expecting VAR after '.'" }
 "("                          {return '(';}
 ")"                          {return ')';}
 "["                          {return '[';}
 "]"                          {return ']';}
 ","                          {return ',';}
-"."                          {return '.';}
-<<EOF>>                      {return 'EOF';}
-\s+                          {/* skip whitespace */}
-
+<<EOF>>                      { return 'EOF';}
 /lex
 
 /* operator associations and precedence */
