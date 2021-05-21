@@ -165,6 +165,8 @@ tests = compileTests [
   ['foo.alike = 1', {foo: {alike: 1}}, true]
   ['foo.not = 1', {foo: {not: 1}}, true]
   ['foo.donot = 1', {foo: {donot: 1}}, true]
+  # Parens shouldn't screw up NOT
+  ['foo = 1 and (not(bar=1))', {foo:1, bar:2}, true]
   # Keywords cannot appear as root properties with the current grammar - these tests wouldn't pass
   # ['or.foo = 1', {or: {foo: 1}}, true]
   # ['and.foo = 1', {and: {foo: 1}}, true]
