@@ -12,7 +12,9 @@
     "mocha": "2.3.3",
     "uglify-js": "3.2.2"
   },
-  "engine": "node >= 5.0.x",
+  "engines": {
+    "node": ">=12.x"
+  },
   "scripts": {
     "test": "node_modules/.bin/mocha -R dot"
   }
