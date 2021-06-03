@@ -35,7 +35,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
         padding: 10px;
         color: goldenrod;
       }
-      pre#result.error, textarea#env.error, textarea#zerkel.error {
+      pre#result.error, textarea#env.error, textarea#zerkelInput.error {
         color: #ff3130;
       }
       h1 {
@@ -105,7 +105,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
         </tr>
         <tr>
           <td>
-            <textarea rows="36" id="zerkel">x.y = 42</textarea>
+            <textarea rows="36" id="zerkelInput">x.y = 42</textarea>
           </td>
           <td>
             <textarea rows="36" id="env">{"x": {"y": 42}}</textarea>
@@ -113,7 +113,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
         </tr>
         <tr>
           <td colspan="2" valign="top" style="background-color:#222">
-            <a style="float:right" href='#{"zerkel":"x.y = 42","env":"{\"x\": {\"y\": 42}}"}'>start over</a>
+            <a style="float:right" href='#{"zerkelInput":"x.y = 42","env":"{\"x\": {\"y\": 42}}"}'>start over</a>
             <pre id="result">result will be displayed here</pre>
           </td>
         </tr>
@@ -121,26 +121,26 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
     </div>
     <script>
       function setHash() {
-        location.hash = "#"+encodeURI(JSON.stringify({zerkel:$("#zerkel").val(),env:$("#env").val()}));
+        location.hash = "#"+encodeURI(JSON.stringify({zerkel:$("#zerkelInput").val(),env:$("#env").val()}));
       }
       function compute() {
         var result, zerkel, env, error = false;
         try {
-          zerkel = $("#zerkel").val();
+          zerkel = $("#zerkelInput").val();
           try {
             env = JSON.parse($("#env").val());
           } catch (e) {
             error = "#env";
             throw e;
           }
-          result = JSON.stringify(window.zerkelExports.compile(zerkel)(env));
+          result = JSON.stringify(window.zerkel.compile(zerkel)(env));
         } catch (e) {
-          if (! error) error = "#zerkel";
+          if (! error) error = "#zerkelInput";
           result = e.message;
         }
         $("#result").text(result).toggleClass("error", Boolean(error));
         $("#env").toggleClass("error", error == "#env");
-        $("#zerkel").toggleClass("error", error == "#zerkel");
+        $("#zerkelInput").toggleClass("error", error == "#zerkelInput");
         setHash();
       }
       $("textarea").on("change keyup", function(e) {
@@ -151,7 +151,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
         var state;
         try {
           state = JSON.parse(decodeURI(location.hash.substr(1)));
-          $("#zerkel").val(state.zerkel);
+          $("#zerkelInput").val(state.zerkel);
           $("#env").val(state.env);
           compute();
         } catch (e) {}

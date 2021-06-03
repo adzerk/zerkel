@@ -13,6 +13,6 @@ compile = (query) ->
 console.log(runtime)
 
 if window?
-  window.zerkelExports = {makePredicate, compile}
+  window.zerkel = {makePredicate, compile}
 else
   module.exports = {makePredicate, compile}

@@ -724,7 +724,7 @@ if (typeof module !== 'undefined' && require.main === module) {
   console.log(runtime);
 
   if (typeof window !== "undefined" && window !== null) {
-    window.zerkelExports = {
+    window.zerkel = {
       makePredicate: makePredicate,
       compile: compile
     };
