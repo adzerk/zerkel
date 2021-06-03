@@ -10,7 +10,9 @@ makePredicate = (body) ->
 compile = (query) ->
   return makePredicate(parser.parse(query))
 
+console.log(runtime)
+
 if window?
-  window.zerkel = {makePredicate, compile}
+  window.zerkelExports = {makePredicate, compile}
 else
   module.exports = {makePredicate, compile}
