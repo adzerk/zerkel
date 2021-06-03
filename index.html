@@ -12,6 +12,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
       var exports = module.exports;
       var require = function() {};
     </script>
+    <script src="src/zerkel-runtime.js"></script>
     <script src="demo/demo.js"></script>
     <style>
       * {
@@ -132,7 +133,7 @@ var c=a.value;return a.setAttribute("type",b),c&&(a.value=c),b}}}},removeAttr:fu
             error = "#env";
             throw e;
           }
-          result = JSON.stringify(window.zerkel.compile(zerkel)(env));
+          result = JSON.stringify(window.zerkelExports.compile(zerkel)(env));
         } catch (e) {
           if (! error) error = "#zerkel";
           result = e.message;
