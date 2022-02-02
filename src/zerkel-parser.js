@@ -83,7 +83,7 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return ($$[$0-1].length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(new Buffer(""+$$[$0-1])).toString('base64') : $$[$0-1]; 
+case 1: return ($$[$0-1].length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(Buffer.from(""+$$[$0-1])).toString('base64') : $$[$0-1]; 
 break;
 case 2:this.$ = "!" + $$[$0];
 break;

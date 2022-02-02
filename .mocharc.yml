@@ -1,0 +1,18 @@
+allow-uncaught: false
+async-only: false
+bail: true
+check-leaks: false
+color: true
+reporter: 'spec'
+delay: false
+diff: true
+sort: true
+package: './package.json'
+exit: true 
+extension:
+  - 'coffee'
+require: 
+  - 'coffee-script/register'
+recursive: true
+ui: 'bdd'
+timeout: 30000

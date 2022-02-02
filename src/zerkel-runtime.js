@@ -43,7 +43,7 @@
 
   if (typeof define !== 'undefined' && define.amd) {
     define([], function () { return zerkelRuntime });
-  } else if (typeof module !== 'undefined' && module.exports && !window) {
+  } else if (typeof module !== 'undefined' && module.exports && (typeof window == 'undefined' || !window)) {
     module.exports = zerkelRuntime;
   } else {
     root.zerkelRuntime = zerkelRuntime;
