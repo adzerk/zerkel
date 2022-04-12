@@ -3,10 +3,10 @@
 export PATH := ./node_modules/.bin:$(PATH)
 
 %.js: %.jison
-	jison $< -o $@
+	jison "$<" -o "$@"
 
 %.gz: %
-	cat $< |gzip -9c > $@
+	cat "$<" |gzip -9c > "$@"
 
 all: src/zerkel-parser.js demo/demo.js dist/zerkel-runtime.min.js.gz
 

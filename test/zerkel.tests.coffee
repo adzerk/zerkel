@@ -150,6 +150,11 @@ tests = compileTests [
   ['foo.bar.oRder contains "some"', {foo: {bar: {oRder: "it's something"}}}, true]
   ['foo.bar.Order contains "some"', {foo: {bar: {Order: "it's something"}}}, true]
   ['foo.andiron = 1', {foo: {andiron: 1}}, true]
+  # sc-28856: Allow 'and' 'or' 'not' inside variable names
+  ['original.raw contains "Hiring"', {original: {raw: "We are Hiring"}}, true]
+  ['notable = 1', {notable: 1}, true]
+  ['andy = 1', {andy: 1}, true]
+  ['caseMatters = 1', {casematters: 1}, false ]
   ['1 = 1 AND 1 = 2', {}, false]
   ['1 = 1 OR 1 = 2', {}, true]
   ['1 = 1 and 1 = 2', {}, false]
@@ -165,8 +170,10 @@ tests = compileTests [
   ['foo.alike = 1', {foo: {alike: 1}}, true]
   ['foo.not = 1', {foo: {not: 1}}, true]
   ['foo.donot = 1', {foo: {donot: 1}}, true]
-  # Parens shouldn't screw up NOT
+  # Parens shouldn't screw up AND, OR, NOT
   ['foo = 1 and (not(bar=1))', {foo:1, bar:2}, true]
+  ['foo = 1 and(not(bar=1))', {foo:1, bar:2}, true]
+  ['foo = 2 or(bar=1)', {foo:1, bar:1}, true]
   # Keywords cannot appear as root properties with the current grammar - these tests wouldn't pass
   # ['or.foo = 1', {or: {foo: 1}}, true]
   # ['and.foo = 1', {and: {foo: 1}}, true]

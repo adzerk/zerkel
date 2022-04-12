@@ -112,13 +112,13 @@ parser.parse '[42, 43] contains foo' # GZ:H4sIAAAAAAAAA9OINjHSMTGOVVODMvQy81JSK/
 
 Prereqs:
 
-`npm install -g jison`
+`npm install`
 
 To test:
 
 `make test`
 
-To package: 
+To package:
 
 `make`
 

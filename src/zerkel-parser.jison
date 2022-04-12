@@ -1,13 +1,14 @@
 /* lexical grammar */
 %lex
+%options case-insensitive
 %x selector
 %%
 <INITIAL,selector>"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
 <INITIAL,selector>"//".*($|\r\n|\r|\n)         {/* skip comments*/}
 <INITIAL,selector>\s+                          {/* skip whitespace */}
-"and"|"AND"                  {return 'AND';}
-"or"|"OR"                    {return 'OR';}
-"not"|"NOT"                  {return 'NOT';}
+"and"                        {return 'AND';}
+"not"                        {return 'NOT';}
+"or"                         {return 'OR';}
 "=~"                         {return '=~';}
 "!~"                         {return '!~';}
 "="                          {return '=';}
@@ -17,12 +18,12 @@
 "<"                          {return '<';}
 ">"                          {return '>';}
 "."                          {this.begin("selector"); return '.';}
-"contains"|"CONTAINS"        {return 'CONTAINS';}
-"like"|"LIKE"                {return 'LIKE';}
+"contains"                   {return 'CONTAINS';}
+"like"                       {return 'LIKE';}
 [\-]?[0-9]+                  {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
-[A-Za-z_$]([A-Za-z0-9_$]+)*  {return 'VAR';}
-<selector>[A-Za-z_$]([A-Za-z0-9_$]+)*  {this.popState(); return 'VAR';}
+[a-z_$]([a-z0-9_$]+)*  {return 'VAR';}
+<selector>[a-z_$]([a-z0-9_$]+)*  {this.popState(); return 'VAR';}
 <selector>.                  { throw "expecting VAR after '.'" }
 "("                          {return '(';}
 ")"                          {return ')';}
@@ -117,4 +118,3 @@ variable
 %%
 
 MIN_GZIP_SIZE = exports.MIN_GZIP_SIZE = Infinity;
-
