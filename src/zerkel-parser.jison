@@ -5,9 +5,13 @@
 <INITIAL,selector>"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
 <INITIAL,selector>"//".*($|\r\n|\r|\n)         {/* skip comments*/}
 <INITIAL,selector>\s+                          {/* skip whitespace */}
-"and"|"AND"                  {return 'AND';}
-"or"|"OR"                    {return 'OR';}
-"not"|"NOT"                  {return 'NOT';}
+/* don't simplify with "and"|"AND" because that triggers boolean operators to be found inside variables */
+"and"                        {return 'AND';}
+"AND"                        {return 'AND';}
+"or"                         {return 'OR';}
+"OR"                         {return 'OR';}
+"not"                        {return 'NOT';}
+"NOT"                        {return 'NOT';}
 "=~"                         {return '=~';}
 "!~"                         {return '!~';}
 "="                          {return '=';}
@@ -17,8 +21,10 @@
 "<"                          {return '<';}
 ">"                          {return '>';}
 "."                          {this.begin("selector"); return '.';}
-"contains"|"CONTAINS"        {return 'CONTAINS';}
-"like"|"LIKE"                {return 'LIKE';}
+"contains"                   {return 'CONTAINS';}
+"CONTAINS"                   {return 'CONTAINS';}
+"like"                       {return 'LIKE';}
+"LIKE"                       {return 'LIKE';}
 [\-]?[0-9]+                  {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
 [A-Za-z_$]([A-Za-z0-9_$]+)*  {return 'VAR';}
@@ -117,4 +123,3 @@ variable
 %%
 
 MIN_GZIP_SIZE = exports.MIN_GZIP_SIZE = Infinity;
-
