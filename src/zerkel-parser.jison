@@ -1,14 +1,17 @@
 /* lexical grammar */
 %lex
-%options case-insensitive
 %x selector
 %%
 <INITIAL,selector>"/*"(.|\r|\n)*?"*/"          {/* skip comments*/}
 <INITIAL,selector>"//".*($|\r\n|\r|\n)         {/* skip comments*/}
 <INITIAL,selector>\s+                          {/* skip whitespace */}
+/* don't simplify with "and"|"AND" because that triggers boolean operators to be found inside variables */
 "and"                        {return 'AND';}
-"not"                        {return 'NOT';}
+"AND"                        {return 'AND';}
 "or"                         {return 'OR';}
+"OR"                         {return 'OR';}
+"not"                        {return 'NOT';}
+"NOT"                        {return 'NOT';}
 "=~"                         {return '=~';}
 "!~"                         {return '!~';}
 "="                          {return '=';}
@@ -19,11 +22,13 @@
 ">"                          {return '>';}
 "."                          {this.begin("selector"); return '.';}
 "contains"                   {return 'CONTAINS';}
+"CONTAINS"                   {return 'CONTAINS';}
 "like"                       {return 'LIKE';}
+"LIKE"                       {return 'LIKE';}
 [\-]?[0-9]+                  {return 'INTEGER';}
 \"[^\"]*\"                   {return 'STRING';}
-[a-z_$]([a-z0-9_$]+)*  {return 'VAR';}
-<selector>[a-z_$]([a-z0-9_$]+)*  {this.popState(); return 'VAR';}
+[A-Za-z_$]([A-Za-z0-9_$]+)*  {return 'VAR';}
+<selector>[A-Za-z_$]([A-Za-z0-9_$]+)*  {this.popState(); return 'VAR';}
 <selector>.                  { throw "expecting VAR after '.'" }
 "("                          {return '(';}
 ")"                          {return ')';}

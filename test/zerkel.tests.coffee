@@ -78,6 +78,9 @@ tests = compileTests [
   ['(x>1 and y < 10) and not (z > 10 or k = 0)', {x: 2, y: 5, z: 5, k:0}, false]
   ['(x > 1 and y < 10) and not (z > 10 or k = 0)', {x: 2, y: 5, z: 15, k:1}, false]
   ['(x > 1 and y < 10) and not (z > 10 or k = 0)', {x: 1, y: 5, z: 5, k:5}, false]
+  ['not (z > 10)', {z: 5}, true]
+  ['NOT (z > 10)', {z: 5}, true]
+  ['not (z < 10)', {z: 5}, false]
   ['array contains "Foo"', {}, false]
   ['array contains "foo"', {array:4}, false]
   ['array contains "foo"', {array:{foo:true}}, false]
@@ -156,6 +159,7 @@ tests = compileTests [
   ['andy = 1', {andy: 1}, true]
   ['caseMatters = 1', {casematters: 1}, false ]
   ['1 = 1 AND 1 = 2', {}, false]
+  ['1 = 1 AND 2 = 2', {}, true]
   ['1 = 1 OR 1 = 2', {}, true]
   ['1 = 1 and 1 = 2', {}, false]
   ['1 = 1 or 1 = 2', {}, true]
@@ -170,6 +174,7 @@ tests = compileTests [
   ['foo.alike = 1', {foo: {alike: 1}}, true]
   ['foo.not = 1', {foo: {not: 1}}, true]
   ['foo.donot = 1', {foo: {donot: 1}}, true]
+  ['And = 1', {And: 1}, true] # <- Kinda ugly, but this is currently supported
   # Parens shouldn't screw up AND, OR, NOT
   ['foo = 1 and (not(bar=1))', {foo:1, bar:2}, true]
   ['foo = 1 and(not(bar=1))', {foo:1, bar:2}, true]
