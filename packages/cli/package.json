@@ -28,12 +28,13 @@
   },
   "homepage": "https://github.com/adzerk/zerkel#readme",
   "dependencies": {
+    "@adzerk/zerkel": "^1.8.7",
     "@types/luxon": "^3.3.2",
     "luxon": "^3.4.3",
-    "yargs": "^17.7.2",
-    "@adzerk/zerkel": "^1.8.7"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@types/node": "^20.6.0",
     "@types/yargs": "^17.0.24",
     "typescript": "^5.2.2"
   }

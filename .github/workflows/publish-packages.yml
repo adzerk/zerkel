@@ -6,6 +6,32 @@ on:
       - v*
 
 jobs:
+  test:
+    name: Test Zerkel
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install Dependencies
+        run: npm clean-install
+
+      - name: Build the Workspaces
+        run: npm run build-all
+
+      - name: Test Everything
+        run: npm run test-all
+
   publish:
     name: Publish Cli
     runs-on: ubuntu-latest
