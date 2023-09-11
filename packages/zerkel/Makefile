@@ -18,4 +18,4 @@ demo/demo.js: src/zerkel-parser.js src/zerkel.coffee
 
 dist/zerkel-runtime.min.js: src/zerkel-runtime.js
 	mkdir -p dist
-	uglifyjs $< -c -m --mangle-props reserved=[module,exports,zerkelRuntime,makePredicate,match,regex,idxof,getIn] > $@
+	npx uglifyjs $< -c -m --mangle-props reserved=[module,exports,zerkelRuntime,makePredicate,match,regex,idxof,getIn] > $@

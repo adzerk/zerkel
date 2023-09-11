@@ -1,0 +1,46 @@
+name: Publish Cli
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish:
+    name: Publish Cli
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    env:
+      AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      WORKSPACE_CLI: packages/cli
+      WORKSPACE_ZERKEL: packages/zerkel
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+
+      - id: configure-npm
+        name: Configure Project-Level .npmrc File
+        run: npm config set --location=project @adzerk:registry=https://registry.npmjs.org //registry.npmjs.org/:_authToken='${AUTH_TOKEN}'
+
+      - name: Install Dependencies
+        run: npm clean-install
+
+      - name: Build the Workspaces
+        run: npm run build-all
+
+      - name: Publish Zerkel to Registry
+        run: npm publish --workspace=${WORKSPACE_ZERKEL}
+
+      - name: Publish Cli to Registry
+        run: npm publish --workspace=${WORKSPACE_CLI}

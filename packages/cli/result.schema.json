@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Zerkel Validation Result",
+  "required": ["body", "result"],
+  "properties": {
+    "body": {
+      "title": "Body",
+      "type": "object",
+      "required": ["code", "version"],
+      "properties": {
+        "code": {
+          "title": "Code",
+          "description": "Result information.",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "description": "Parser version.",
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        }
+      }
+    },
+    "result": {
+      "title": "Result",
+      "description": "Whether or not the validation was successful.",
+      "enum": ["failure", "success"]
+    }
+  }
+}
