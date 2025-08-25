@@ -1,6 +1,6 @@
 {
   "name": "zerkel",
-  "version": "1.8.9",
+  "version": "1.8.10",
   "description": "A compiler for the zerkel language",
   "dependencies": {
     "browserify": "17.0.0",
