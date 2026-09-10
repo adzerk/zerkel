@@ -8,14 +8,17 @@ export PATH := ./node_modules/.bin:$(PATH)
 %.gz: %
 	cat "$<" |gzip -9c > "$@"
 
-all: src/zerkel-parser.js demo/demo.js dist/zerkel-runtime.min.js.gz
+all: src/zerkel-parser.js zerkel-parser.js demo/demo.js dist/zerkel-runtime.min.js.gz
 
-test: src/zerkel-parser.js
+test: all
 	npm test
+
+zerkel-parser.js: src/zerkel-parser.js
+	cp "$<" "$@"
 
 demo/demo.js: src/zerkel-parser.js src/zerkel.coffee
 	bash -c "cat $< <(./node_modules/.bin/coffee -pc src/) > $@"
 
 dist/zerkel-runtime.min.js: src/zerkel-runtime.js
 	mkdir -p dist
-	uglifyjs $< -c -m --mangle-props reserved=[module,exports,zerkelRuntime,makePredicate,match,regex,idxof,getIn] > $@
+	uglifyjs $< -c -m --mangle-props reserved=[module,exports,amd,zerkelRuntime,makePredicate,makeDetailedPredicate,match,regex,idxof,getIn,captureSegmentMetadata,matched,referencedSegmentIds,metadataComplete] > $@

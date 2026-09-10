@@ -19,6 +19,7 @@
       var type = (Object.prototype.toString.call(val).match(/^\[object (.*)]$/)||[])[1];
       return val && (type === 'String' || type === 'Array') && val.indexOf(x) >= 0;
     },
+    captureSegmentMetadata: function() {},
     // deprecated
     getIn: function(env, varName) {
       var levels = varName.split(".");
@@ -38,6 +39,23 @@
     makePredicate: function(body) {
       var fn = new Function('_helpers', '_env', "return " + body);
       return function(env) { return Boolean(fn(helpers, env)); };
+    },
+    makeDetailedPredicate: function(body) {
+      var fn = new Function('_helpers', '_env', "return " + body);
+      return function(env) {
+        var referencedSegmentIds = [];
+        var metadataComplete = false;
+        var evaluationHelpers = Object.create(helpers);
+        evaluationHelpers.captureSegmentMetadata = function(ids, complete) {
+          referencedSegmentIds = ids.slice();
+          metadataComplete = complete === true;
+        };
+        return {
+          matched: Boolean(fn(evaluationHelpers, env)),
+          referencedSegmentIds: referencedSegmentIds.slice(),
+          metadataComplete: metadataComplete
+        };
+      };
     }
   };
 

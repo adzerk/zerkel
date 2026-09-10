@@ -53,73 +53,142 @@
 
 expressions
     : e EOF
-        %{ return ($1.length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(Buffer.from(""+$1)).toString('base64') : $1; }
+        %{
+          var refs = uniqueSortedSafeIntegers($1.references);
+          var complete = $1.segmentUses === $1.supportedSegmentUses;
+          var code = "(_helpers['captureSegmentMetadata'](" + JSON.stringify(refs) + "," + complete + ")," + $1.code + ")";
+          return (code.length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(Buffer.from(code)).toString('base64') : code;
+        }
     ;
 e
     : NOT e
-        {$$ = "!" + $2;}
+        {$$ = combine("!" + $2.code, [$2]);}
     | '(' e ')'
-        {$$ = "(" + $2 + ")";}
+        {$$ = combine("(" + $2.code + ")", [$2]);}
     | e AND e
-        {$$ = $1 + " && " + $3;}
+        {$$ = combine($1.code + " && " + $3.code, [$1, $3]);}
     | e OR e
-        {$$ = $1 + " || " + $3;}
+        {$$ = combine($1.code + " || " + $3.code, [$1, $3]);}
     | value '=' value
-        {$$ = $1 + "==" + $3;}
+        {$$ = combine($1.code + "==" + $3.code, [$1, $3]);}
     | value '<>' value
-        {$$ = $1 + "!=" + $3;}
+        {$$ = combine($1.code + "!=" + $3.code, [$1, $3]);}
     | value '<=' value
-        {$$ = $1 + $2 + $3}
+        {$$ = combine($1.code + $2 + $3.code, [$1, $3]);}
     | value '>=' value
-        {$$ = $1 + $2 + $3}
+        {$$ = combine($1.code + $2 + $3.code, [$1, $3]);}
     | value '<' value
-        {$$ = $1 + $2 + $3}
+        {$$ = combine($1.code + $2 + $3.code, [$1, $3]);}
     | value '>' value
-        {$$ = $1 + $2 + $3}
+        {$$ = combine($1.code + $2 + $3.code, [$1, $3]);}
     | arrayvalue CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+        {$$ = containsValue($1, $3);}
     | value CONTAINS value
-        {$$ = "_helpers['idxof'](" + $1 + "," + $3 + ")"; }
+        {$$ = containsValue($1, $3);}
     | value LIKE value
-        {$$ = "_helpers['match'](" + $1 + "," + $3 + ")";}
+        {$$ = combine("_helpers['match'](" + $1.code + "," + $3.code + ")", [$1, $3]);}
     | value '=~' STRING
-        {new RegExp($3.substr(1, $3.length - 2)); $$ = "_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
+        {new RegExp($3.substr(1, $3.length - 2)); $$ = combine("_helpers['regex'](" + $1.code + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")", [$1]);}
     | value '!~' STRING
-        {new RegExp($3.substr(1, $3.length - 2)); $$ = "!_helpers['regex'](" + $1 + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")";}
+        {new RegExp($3.substr(1, $3.length - 2)); $$ = combine("!_helpers['regex'](" + $1.code + "," + JSON.stringify($3.substr(1, $3.length - 2)) + ")", [$1]);}
     | value
         {$$ = $1;}
     ;
 arrayitems
     : INTEGER
-        {$$ = $1;}
+        {$$ = integerValue(yytext);}
     | STRING
-        {$$ = $1;}
+        {$$ = literalValue(yytext, 'string');}
     | arrayitems ',' INTEGER
-        {$$ = $1+$2+$3;}
+        {$$ = combine($1.code + $2 + Number($3), [$1]);}
     | arrayitems ',' STRING
-        {$$ = $1+$2+$3;}
+        {$$ = combine($1.code + $2 + $3, [$1]);}
     ;
 arrayvalue
     : '[' ']'
-        {$$ = $1+$2;}
+        {$$ = combine($1+$2, []);}
     | '[' arrayitems ']'
-        {$$ = $1+$2+$3;}
+        {$$ = combine($1+$2.code+$3, [$2]);}
     ;
 value
     : INTEGER
-        {$$ = Number(yytext);}
+        {$$ = integerValue(yytext);}
     | STRING
-        {$$ = yytext;}
+        {$$ = literalValue(yytext, 'string');}
     | variable
         {$$ = $1;}
     ;
 variable
     : VAR
-        {$$ = "_env." + yytext;}
+        {$$ = variableValue(yytext, "_env." + yytext);}
     | variable '.' VAR
-        {$$ = "(" + $1 + "||{})." + $3;}
+        {$$ = variableValue($1.path + "." + $3, "(" + $1.code + "||{})." + $3);}
     ;
 
 %%
 
 MIN_GZIP_SIZE = exports.MIN_GZIP_SIZE = Infinity;
+
+function semanticValue(code, kind, path, integer, references, segmentUses, supportedSegmentUses) {
+  return {
+    code: code,
+    kind: kind || 'expression',
+    path: path,
+    integer: integer,
+    references: references || [],
+    segmentUses: segmentUses || 0,
+    supportedSegmentUses: supportedSegmentUses || 0
+  };
+}
+
+function combine(code, values) {
+  var references = [];
+  var segmentUses = 0;
+  var supportedSegmentUses = 0;
+
+  values.forEach(function(value) {
+    references = references.concat(value.references);
+    segmentUses += value.segmentUses;
+    supportedSegmentUses += value.supportedSegmentUses;
+  });
+
+  return semanticValue(code, 'expression', undefined, undefined,
+    references, segmentUses, supportedSegmentUses);
+}
+
+function literalValue(code, kind) {
+  return semanticValue(code, kind);
+}
+
+function integerValue(text) {
+  var value = Number(text);
+  return semanticValue(String(value), 'integer', undefined, value);
+}
+
+function variableValue(path, code) {
+  var usesSegments = path === '$user.segments' || path.indexOf('$user.segments.') === 0;
+  return semanticValue(code, 'variable', path, undefined, [], usesSegments ? 1 : 0, 0);
+}
+
+function containsValue(left, right) {
+  var result = combine("_helpers['idxof'](" + left.code + "," + right.code + ")", [left, right]);
+  if (left.path === '$user.segments' && right.kind === 'integer' && Number.isSafeInteger(right.integer)) {
+    result.references.push(right.integer);
+    result.supportedSegmentUses += 1;
+  }
+  return result;
+}
+
+function uniqueSortedSafeIntegers(values) {
+  var seen = Object.create(null);
+  var result = [];
+
+  values.forEach(function(value) {
+    var key = String(value);
+    if (!Number.isSafeInteger(value) || seen[key]) return;
+    seen[key] = true;
+    result.push(value);
+  });
+
+  return result.sort(function(left, right) { return left - right; });
+}

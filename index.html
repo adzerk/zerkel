@@ -158,7 +158,7 @@
         try {
           env = JSON.parse(envElement.value);
           removeError(envElement)
-          result = JSON.stringify(window.zerkel.compile(zerkel)(env));
+          result = JSON.stringify(window.zerkel.compileDetailed(zerkel)(env));
         } catch (e) {
           addError(envElement, e);
           throw e;

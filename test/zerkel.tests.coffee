@@ -2,8 +2,11 @@ assert   = require('chai').assert
 compiler = require('../')
 version  = require('../package.json').version
 fs       = require('fs')
+fc       = require('fast-check')
+vm       = require('vm')
 parser   = compiler.parser
 makePredicate = require('../dist/zerkel-runtime.min.js').makePredicate
+makeDetailedPredicate = require('../dist/zerkel-runtime.min.js').makeDetailedPredicate
 
 map = (f, xs) ->
   ret = []
@@ -197,9 +200,8 @@ describe "version #{version}", ->
     describe "\n\n## #{file} \n\n", ->
       runTest test for test in JSON.parse(fs.readFileSync(file))
 
-  parser.MIN_GZIP_SIZE = 50
-
   describe "small zerkel queries", ->
+    parser.MIN_GZIP_SIZE = 500
     q = 'foo = 42'
     c = parser.parse q
     p = compiler.makePredicate c
@@ -212,6 +214,7 @@ describe "version #{version}", ->
       assert(p({foo:"bar"}) is false)
 
   describe "large zerkel queries", ->
+    parser.MIN_GZIP_SIZE = 50
     q = '[42, 43] contains foo and [100, 200, 300] contains bar'
     c = parser.parse q
     p = compiler.makePredicate c
@@ -223,3 +226,196 @@ describe "version #{version}", ->
       assert(p({foo:42, bar:100}) is true)
       assert(p({foo:43, bar:100}) is true)
       assert(p({foo:"bar", bar:100}) is false)
+
+  describe "[ZDE-BOOLEAN-COMPAT] additive APIs", ->
+    it "keeps legacy predicates Boolean", ->
+      assert.strictEqual compiler.compile('foo = 42')({foo: 42}), true
+      assert.strictEqual compiler.makePredicate(parser.parse('foo = 42'))({foo: 0}), false
+
+    it "returns detailed results without changing the verdict", ->
+      query = '$user.segments CONTAINS 7 and country = "US"'
+      env = {$user: {segments: [7]}, country: 'US'}
+      assert.deepEqual compiler.compileDetailed(query)(env),
+        matched: true
+        referencedSegmentIds: [7]
+        metadataComplete: true
+      assert.strictEqual compiler.compile(query)(env), true
+
+    it "throws synchronously from factories and predicates", ->
+      assert.throws -> compiler.compile('foo =')
+      predicate = compiler.compileDetailed('foo.bar = 1')
+      env = {}
+      Object.defineProperty env, 'foo', get: -> throw new Error('boom')
+      assert.throws -> predicate(env)
+
+  describe "[ZDE-REFERENCE-METADATA] segment metadata", ->
+    evaluate = (query, env = {$user: {segments: []}}) ->
+      compiler.compileDetailed(query)(env)
+
+    it "collects unique sorted references from every branch", ->
+      result = evaluate '$user.segments CONTAINS 9 OR NOT ($user.segments contains -2) OR $user.segments CONTAINS 9'
+      assert.deepEqual result.referencedSegmentIds, [-2, 9]
+      assert.strictEqual result.metadataComplete, true
+
+    it "ignores unrelated integers", ->
+      result = evaluate '$user.age = 42 AND country = "US"',
+        $user: {age: 42, segments: []}
+        country: 'US'
+      assert.deepEqual result.referencedSegmentIds, []
+      assert.strictEqual result.metadataComplete, true
+
+    it "marks dynamic and reversed segment uses incomplete", ->
+      dynamic = evaluate '$user.segments CONTAINS wanted',
+        $user: {segments: [7]}
+        wanted: 7
+      reversed = evaluate 'candidate CONTAINS $user.segments',
+        $user: {segments: [7]}
+        candidate: [[7]]
+      assert.strictEqual dynamic.metadataComplete, false
+      assert.strictEqual reversed.metadataComplete, false
+
+    it "marks unsafe segment literals incomplete without changing the verdict", ->
+      query = '$user.segments CONTAINS 9007199254740992'
+      env = {$user: {segments: [9007199254740992]}}
+      result = evaluate query, env
+      assert.strictEqual result.matched, compiler.compile(query)(env)
+      assert.deepEqual result.referencedSegmentIds, []
+      assert.strictEqual result.metadataComplete, false
+
+    it "includes both safe integer endpoints", ->
+      query = '$user.segments CONTAINS -9007199254740991 OR $user.segments CONTAINS 9007199254740991'
+      result = evaluate query, {$user: {segments: [9007199254740991]}}
+      assert.deepEqual result.referencedSegmentIds,
+        [-9007199254740991, 9007199254740991]
+      assert.strictEqual result.metadataComplete, true
+
+    it "marks both unsafe boundaries incomplete", ->
+      positive = evaluate '$user.segments CONTAINS 9007199254740992'
+      negative = evaluate '$user.segments CONTAINS -9007199254740992'
+      assert.strictEqual positive.metadataComplete, false
+      assert.strictEqual negative.metadataComplete, false
+
+    it "normalizes negative zero metadata to zero", ->
+      result = evaluate '$user.segments CONTAINS -0', {$user: {segments: [0]}}
+      assert.deepEqual result.referencedSegmentIds, [0]
+      assert.strictEqual result.matched, true
+
+    it "marks a mixed supported and unsupported rule incomplete", ->
+      result = evaluate '$user.segments CONTAINS 7 OR $user.segments CONTAINS wanted',
+        $user: {segments: [7]}
+        wanted: 9
+      assert.deepEqual result.referencedSegmentIds, [7]
+      assert.strictEqual result.metadataComplete, false
+
+    it "does not confuse nearby variable paths with user segments", ->
+      result = evaluate '$user.segment CONTAINS 7', {$user: {segment: [7], segments: []}}
+      assert.deepEqual result.referencedSegmentIds, []
+      assert.strictEqual result.metadataComplete, true
+
+    it "distinguishes legacy and new segment-free compiled expressions", ->
+      legacy = makeDetailedPredicate('_env.foo==42')({foo: 42})
+      current = evaluate('foo = 42', {foo: 42})
+      assert.deepEqual legacy,
+        matched: true
+        referencedSegmentIds: []
+        metadataComplete: false
+      assert.deepEqual current,
+        matched: true
+        referencedSegmentIds: []
+        metadataComplete: true
+
+    it "returns independently owned metadata arrays", ->
+      predicate = compiler.compileDetailed '$user.segments CONTAINS 7'
+      first = predicate {$user: {segments: [7]}}
+      first.referencedSegmentIds.push 9
+      second = predicate {$user: {segments: []}}
+      assert.deepEqual second,
+        matched: false
+        referencedSegmentIds: [7]
+        metadataComplete: true
+
+    it "isolates nested detailed predicate evaluations", ->
+      outer = compiler.compileDetailed '$user.segments CONTAINS 7'
+      inner = compiler.compileDetailed '$user.segments CONTAINS 9'
+      env = {$user: {segments: [7]}}
+      Object.defineProperty env.$user.segments, 'indexOf',
+        value: (value) ->
+          nested = inner({$user: {segments: [9]}})
+          assert.deepEqual nested.referencedSegmentIds, [9]
+          return Array::indexOf.call(this, value)
+      result = outer(env)
+      assert.deepEqual result.referencedSegmentIds, [7]
+      assert.strictEqual result.metadataComplete, true
+
+    it "keeps metadata stable across environments and short-circuiting", ->
+      predicate = compiler.compileDetailed 'country = "US" OR $user.segments CONTAINS 7'
+      first = predicate {country: 'US', $user: {segments: []}}
+      second = predicate {country: 'CA', $user: {segments: [7]}}
+      assert.deepEqual first.referencedSegmentIds, second.referencedSegmentIds
+      assert.strictEqual first.metadataComplete, second.metadataComplete
+
+  describe "[ZDE-ENCODING] generated runtime", ->
+    it "exposes both API families in the minified runtime", ->
+      parser.MIN_GZIP_SIZE = Infinity
+      compiled = parser.parse '$user.segments CONTAINS 7'
+      env = {$user: {segments: [7]}}
+      assert.strictEqual makePredicate(compiled)(env), true
+      assert.deepEqual makeDetailedPredicate(compiled)(env),
+        matched: true
+        referencedSegmentIds: [7]
+        metadataComplete: true
+
+    it "preserves detailed evaluation through Node gzip decoding", ->
+      parser.MIN_GZIP_SIZE = 1
+      compiled = parser.parse '$user.segments CONTAINS 7'
+      assert.match compiled, /^GZ:/
+      assert.deepEqual compiler.makeDetailedPredicate(compiled)({$user: {segments: [7]}}),
+        matched: true
+        referencedSegmentIds: [7]
+        metadataComplete: true
+
+    it "exports both factories to browser globals and AMD", ->
+      source = fs.readFileSync('src/zerkel-runtime.js', 'utf8')
+      browser = {}
+      vm.runInNewContext(source, browser)
+      assert.strictEqual typeof browser.zerkelRuntime.makePredicate, 'function'
+      assert.strictEqual typeof browser.zerkelRuntime.makeDetailedPredicate, 'function'
+
+      amdModule = null
+      define = (dependencies, factory) -> amdModule = factory()
+      define.amd = true
+      vm.runInNewContext(source, {define})
+      assert.strictEqual typeof amdModule.makePredicate, 'function'
+      assert.strictEqual typeof amdModule.makeDetailedPredicate, 'function'
+
+  describe "[ZDE-EVIDENCE-MATRIX] generated properties", ->
+    it "matches an independent OR-of-segments evaluator", ->
+      fc.assert fc.property(
+        fc.uniqueArray(fc.integer({min: -1000, max: 1000}), {maxLength: 20})
+        fc.uniqueArray(fc.integer({min: -1000, max: 1000}), {maxLength: 20})
+        (references, userSegments) ->
+          clauses = ("$user.segments CONTAINS #{id}" for id in references)
+          query = if clauses.length then clauses.join(' OR ') else '1 = 2'
+          env = {$user: {segments: userSegments}}
+          detailed = compiler.compileDetailed(query)(env)
+          expected = references.some (id) -> id in userSegments
+          assert.strictEqual detailed.matched, expected
+          assert.strictEqual compiler.compile(query)(env), expected
+          assert.deepEqual detailed.referencedSegmentIds,
+            references.slice().sort((left, right) -> left - right)
+          assert.strictEqual detailed.metadataComplete, true
+      ), {numRuns: 1000}
+
+    it "keeps metadata stable under branch order and duplication", ->
+      fc.assert fc.property(
+        fc.uniqueArray(fc.integer({min: -1000, max: 1000}), {minLength: 1, maxLength: 20})
+        (references) ->
+          clauses = ("$user.segments CONTAINS #{id}" for id in references)
+          forward = compiler.compileDetailed(clauses.join(' OR '))({$user: {segments: references}})
+          transformed = compiler.compileDetailed(clauses.slice().reverse().concat(clauses[0]).join(' or '))(
+            {$user: {segments: references}}
+          )
+          assert.deepEqual transformed.referencedSegmentIds, forward.referencedSegmentIds
+          assert.strictEqual transformed.metadataComplete, forward.metadataComplete
+          assert.strictEqual transformed.matched, forward.matched
+      ), {numRuns: 1000}
