@@ -47,6 +47,7 @@ runTest = ({zerkel, compiled, env, expected}) ->
       describe "with #{JSON.stringify(env)}", ->
         it "should be #{expected}", ->
           assert.equal expected, makePredicate(compiled)(env)
+          assert.equal expected, makeDetailedPredicate(compiled)(env).matched
 
 tests = compileTests [
   ['"foo" like "Foo*"', {}, false]
