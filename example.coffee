@@ -17,3 +17,8 @@ console.log fn {x: 1, y: 3}
 
 # print "true"
 console.log fn {z: 3}
+
+detailed = zerkel.compileDetailed '$user.segments CONTAINS 3'
+
+# prints {matched: true, referencedSegmentIds: [3], metadataComplete: true}
+console.log detailed {$user: {segments: [3]}}

@@ -83,61 +83,66 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return ($$[$0-1].length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(Buffer.from(""+$$[$0-1])).toString('base64') : $$[$0-1]; 
+case 1:
+          var refs = uniqueSortedSafeIntegers($$[$0-1].references);
+          var complete = $$[$0-1].segmentUses === $$[$0-1].supportedSegmentUses;
+          var code = "(_helpers['captureSegmentMetadata'](" + JSON.stringify(refs) + "," + complete + ")," + $$[$0-1].code + ")";
+          return (code.length >= exports.MIN_GZIP_SIZE) ? "GZ:" + require('zlib').gzipSync(Buffer.from(code)).toString('base64') : code;
+        
 break;
-case 2:this.$ = "!" + $$[$0];
+case 2:this.$ = combine("!" + $$[$0].code, [$$[$0]]);
 break;
-case 3:this.$ = "(" + $$[$0-1] + ")";
+case 3:this.$ = combine("(" + $$[$0-1].code + ")", [$$[$0-1]]);
 break;
-case 4:this.$ = $$[$0-2] + " && " + $$[$0];
+case 4:this.$ = combine($$[$0-2].code + " && " + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 5:this.$ = $$[$0-2] + " || " + $$[$0];
+case 5:this.$ = combine($$[$0-2].code + " || " + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 6:this.$ = $$[$0-2] + "==" + $$[$0];
+case 6:this.$ = combine($$[$0-2].code + "==" + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 7:this.$ = $$[$0-2] + "!=" + $$[$0];
+case 7:this.$ = combine($$[$0-2].code + "!=" + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 8:this.$ = $$[$0-2] + $$[$0-1] + $$[$0]
+case 8:this.$ = combine($$[$0-2].code + $$[$0-1] + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 9:this.$ = $$[$0-2] + $$[$0-1] + $$[$0]
+case 9:this.$ = combine($$[$0-2].code + $$[$0-1] + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 10:this.$ = $$[$0-2] + $$[$0-1] + $$[$0]
+case 10:this.$ = combine($$[$0-2].code + $$[$0-1] + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 11:this.$ = $$[$0-2] + $$[$0-1] + $$[$0]
+case 11:this.$ = combine($$[$0-2].code + $$[$0-1] + $$[$0].code, [$$[$0-2], $$[$0]]);
 break;
-case 12:this.$ = "_helpers['idxof'](" + $$[$0-2] + "," + $$[$0] + ")"; 
+case 12:this.$ = containsValue($$[$0-2], $$[$0]);
 break;
-case 13:this.$ = "_helpers['idxof'](" + $$[$0-2] + "," + $$[$0] + ")"; 
+case 13:this.$ = containsValue($$[$0-2], $$[$0]);
 break;
-case 14:this.$ = "_helpers['match'](" + $$[$0-2] + "," + $$[$0] + ")";
+case 14:this.$ = combine("_helpers['match'](" + $$[$0-2].code + "," + $$[$0].code + ")", [$$[$0-2], $$[$0]]);
 break;
-case 15:new RegExp($$[$0].substr(1, $$[$0].length - 2)); this.$ = "_helpers['regex'](" + $$[$0-2] + "," + JSON.stringify($$[$0].substr(1, $$[$0].length - 2)) + ")";
+case 15:new RegExp($$[$0].substr(1, $$[$0].length - 2)); this.$ = combine("_helpers['regex'](" + $$[$0-2].code + "," + JSON.stringify($$[$0].substr(1, $$[$0].length - 2)) + ")", [$$[$0-2]]);
 break;
-case 16:new RegExp($$[$0].substr(1, $$[$0].length - 2)); this.$ = "!_helpers['regex'](" + $$[$0-2] + "," + JSON.stringify($$[$0].substr(1, $$[$0].length - 2)) + ")";
+case 16:new RegExp($$[$0].substr(1, $$[$0].length - 2)); this.$ = combine("!_helpers['regex'](" + $$[$0-2].code + "," + JSON.stringify($$[$0].substr(1, $$[$0].length - 2)) + ")", [$$[$0-2]]);
 break;
 case 17:this.$ = $$[$0];
 break;
-case 18:this.$ = $$[$0];
+case 18:this.$ = integerValue(yytext);
 break;
-case 19:this.$ = $$[$0];
+case 19:this.$ = literalValue(yytext, 'string');
 break;
-case 20:this.$ = $$[$0-2]+$$[$0-1]+$$[$0];
+case 20:this.$ = combine($$[$0-2].code + $$[$0-1] + Number($$[$0]), [$$[$0-2]]);
 break;
-case 21:this.$ = $$[$0-2]+$$[$0-1]+$$[$0];
+case 21:this.$ = combine($$[$0-2].code + $$[$0-1] + $$[$0], [$$[$0-2]]);
 break;
-case 22:this.$ = $$[$0-1]+$$[$0];
+case 22:this.$ = combine($$[$0-1]+$$[$0], []);
 break;
-case 23:this.$ = $$[$0-2]+$$[$0-1]+$$[$0];
+case 23:this.$ = combine($$[$0-2]+$$[$0-1].code+$$[$0], [$$[$0-1]]);
 break;
-case 24:this.$ = Number(yytext);
+case 24:this.$ = integerValue(yytext);
 break;
-case 25:this.$ = yytext;
+case 25:this.$ = literalValue(yytext, 'string');
 break;
 case 26:this.$ = $$[$0];
 break;
-case 27:this.$ = "_env." + yytext;
+case 27:this.$ = variableValue(yytext, "_env." + yytext);
 break;
-case 28:this.$ = "(" + $$[$0-2] + "||{})." + $$[$0];
+case 28:this.$ = variableValue($$[$0-2].path + "." + $$[$0], "(" + $$[$0-2].code + "||{})." + $$[$0]);
 break;
 }
 },
@@ -283,6 +288,70 @@ parse: function parse(input) {
 
 
 MIN_GZIP_SIZE = exports.MIN_GZIP_SIZE = Infinity;
+
+function semanticValue(code, kind, path, integer, references, segmentUses, supportedSegmentUses) {
+  return {
+    code: code,
+    kind: kind || 'expression',
+    path: path,
+    integer: integer,
+    references: references || [],
+    segmentUses: segmentUses || 0,
+    supportedSegmentUses: supportedSegmentUses || 0
+  };
+}
+
+function combine(code, values) {
+  var references = [];
+  var segmentUses = 0;
+  var supportedSegmentUses = 0;
+
+  values.forEach(function(value) {
+    references = references.concat(value.references);
+    segmentUses += value.segmentUses;
+    supportedSegmentUses += value.supportedSegmentUses;
+  });
+
+  return semanticValue(code, 'expression', undefined, undefined,
+    references, segmentUses, supportedSegmentUses);
+}
+
+function literalValue(code, kind) {
+  return semanticValue(code, kind);
+}
+
+function integerValue(text) {
+  var value = Number(text);
+  return semanticValue(String(value), 'integer', undefined, value);
+}
+
+function variableValue(path, code) {
+  var usesSegments = path === '$user.segments' || path.indexOf('$user.segments.') === 0;
+  return semanticValue(code, 'variable', path, undefined, [], usesSegments ? 1 : 0, 0);
+}
+
+function containsValue(left, right) {
+  var result = combine("_helpers['idxof'](" + left.code + "," + right.code + ")", [left, right]);
+  if (left.path === '$user.segments' && right.kind === 'integer' && Number.isSafeInteger(right.integer)) {
+    result.references.push(right.integer);
+    result.supportedSegmentUses += 1;
+  }
+  return result;
+}
+
+function uniqueSortedSafeIntegers(values) {
+  var seen = Object.create(null);
+  var result = [];
+
+  values.forEach(function(value) {
+    var key = String(value);
+    if (!Number.isSafeInteger(value) || seen[key]) return;
+    seen[key] = true;
+    result.push(value);
+  });
+
+  return result.sort(function(left, right) { return left - right; });
+}
 /* generated by jison-lex 0.2.1 */
 var lexer = (function(){
 var lexer = {
@@ -711,7 +780,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 }// Generated by CoffeeScript 1.7.1
 (function() {
-  var compile, makePredicate, parser, runtime, zlib;
+  var compile, compileDetailed, makeDetailedPredicate, makePredicate, parser, runtime, zlib;
 
   parser = require('./zerkel-parser') || (typeof window !== "undefined" && window !== null ? window.zerkelParser : void 0);
 
@@ -726,19 +795,34 @@ if (typeof module !== 'undefined' && require.main === module) {
     return runtime.makePredicate(body);
   };
 
+  makeDetailedPredicate = function(body) {
+    if (body.substr(0, 3) === "GZ:") {
+      body = zlib.unzipSync(Buffer.from(body.substr(3), 'base64')).toString();
+    }
+    return runtime.makeDetailedPredicate(body);
+  };
+
   compile = function(query) {
     return makePredicate(parser.parse(query));
+  };
+
+  compileDetailed = function(query) {
+    return makeDetailedPredicate(parser.parse(query));
   };
 
   if (typeof window !== "undefined" && window !== null) {
     window.zerkel = {
       makePredicate: makePredicate,
-      compile: compile
+      compile: compile,
+      makeDetailedPredicate: makeDetailedPredicate,
+      compileDetailed: compileDetailed
     };
   } else {
     module.exports = {
       makePredicate: makePredicate,
-      compile: compile
+      compile: compile,
+      makeDetailedPredicate: makeDetailedPredicate,
+      compileDetailed: compileDetailed
     };
   }
 

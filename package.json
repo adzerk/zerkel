@@ -1,6 +1,6 @@
 {
   "name": "zerkel",
-  "version": "1.8.10",
+  "version": "1.9.0",
   "description": "A compiler for the zerkel language",
   "dependencies": {
     "browserify": "17.0.0",
@@ -9,6 +9,7 @@
   "devDependencies": {
     "chai": "1.2.0",
     "jison": "0.4.13",
+    "fast-check": "3.15.1",
     "mocha": "^11.1.0",
     "uglify-js": "3.2.2"
   },

@@ -57,6 +57,21 @@ matchFn {count: 12, user: 'alice'} # false
 matchFn {count: 50, user: 'george'} # false
 ```
 
+Use the detailed API when a caller also needs static segment-reference metadata:
+
+```coffeescript
+query = '$user.segments CONTAINS 42'
+matchDetailed = zerkel.compileDetailed query
+
+matchDetailed {$user: {segments: [42]}}
+# {matched: true, referencedSegmentIds: [42], metadataComplete: true}
+```
+
+`compile` and `makePredicate` always return Boolean predicates.
+`compileDetailed` and `makeDetailedPredicate` return detailed predicates. An old
+compiled expression has no embedded metadata, so detailed evaluation returns an
+empty reference list with `metadataComplete: false`.
+
 You can also access properties on passed in objects, like so:
 
 ```coffeescript
@@ -88,6 +103,9 @@ In the client:
 var precompiled = '...'; // The precompiled query from NodeJS above.
 var predicateFn = zerkelRuntime.makePredicate(precompiled);
 var result      = predicateFn({count: 50, user: 'bob'});
+
+var detailedFn = zerkelRuntime.makeDetailedPredicate(precompiled);
+var details    = detailedFn({count: 50, user: 'bob'});
 </script>
 ```
 
